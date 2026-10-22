@@ -11,7 +11,7 @@ workers_dev = true
 # Сайты, которым разрешено слать ответы (через запятую).
 ALLOWED_ORIGINS = "https://shakhzodmir.github.io"
 
-# Не больше 6 ответов в минуту с одного адреса.
+# Мягкое ограничение: 6 ответов в минуту с одного адреса (Cloudflare считает приблизительно).
 [[ratelimits]]
 name = "RSVP_LIMITER"
 namespace_id = "4107"
