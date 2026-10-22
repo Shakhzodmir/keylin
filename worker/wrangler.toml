@@ -1,0 +1,20 @@
+# KeLin Cosmetics: приём ответов гостей (Cloudflare Worker).
+# Секреты здесь НЕ хранятся. Они задаются командами:
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN
+#   npx wrangler secret put TELEGRAM_CHAT_IDS
+name = "keylin-rsvp"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+workers_dev = true
+
+[vars]
+# Сайты, которым разрешено слать ответы (через запятую).
+ALLOWED_ORIGINS = "https://shakhzodmir.github.io"
+
+# Не больше 6 ответов в минуту с одного адреса.
+[[ratelimits]]
+name = "RSVP_LIMITER"
+namespace_id = "4107"
+  [ratelimits.simple]
+  limit = 6
+  period = 60
