@@ -146,6 +146,9 @@ test('неизвестный путь и метод', async () => {
 });
 
 test('текст сообщения', () => {
-  const t = formatMessage({ name: 'Аня', attending: true, guests: 2, note: '', lang: 'uz' });
-  assert.equal(t, '💌 Новый ответ на приглашение\n👤 Аня\n✅ Придёт, человек: 2\n🌐 Язык страницы: uz');
+  const t = formatMessage({ name: 'Аня', attending: true, guests: 2, note: '' });
+  assert.equal(t, '👤 Аня\n✅ Придёт, человек: 2');
+  const withNote = formatMessage({ name: 'Аня', attending: false, guests: 0, note: 'Поздравляю!' });
+  assert.equal(withNote, '👤 Аня\n❌ Не сможет прийти\n💬 Поздравляю!');
+  assert.ok(!t.includes('Новый ответ') && !t.includes('Язык'));
 });

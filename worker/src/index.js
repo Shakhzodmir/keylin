@@ -67,15 +67,14 @@ export function parseRsvp(data) {
     if (typeof data.note !== 'string') return { error: 'note' };
     note = clean(data.note, MAX_NOTE);
   }
-  const lang = data.lang === 'ru' ? 'ru' : 'uz';
-  return { value: { name, attending: data.attending, guests, note, lang } };
+  return { value: { name, attending: data.attending, guests, note } };
 }
 
+// В Telegram уходит только суть: кто, придёт ли, сколько человек и комментарий.
 export function formatMessage(r) {
-  const lines = ['💌 Новый ответ на приглашение', '👤 ' + r.name];
+  const lines = ['👤 ' + r.name];
   lines.push(r.attending ? '✅ Придёт, человек: ' + r.guests : '❌ Не сможет прийти');
   if (r.note) lines.push('💬 ' + r.note);
-  lines.push('🌐 Язык страницы: ' + r.lang);
   return lines.join('\n');
 }
 
