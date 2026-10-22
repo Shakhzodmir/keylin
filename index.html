@@ -15,9 +15,7 @@
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" type="image/webp" href="assets/logo/key.webp">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Sacramento&display=swap">
+<link rel="preload" as="font" type="font/ttf" href="assets/fonts/Jost.ttf" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <script>
 /* Ворота показываем один раз при входе. Прямая ссылка на раздел (#rsvp) или ?skip их пропускает.
@@ -31,6 +29,9 @@
     d.classList.remove('is-locked');
     var g = document.getElementById('gate');
     if (g) g.hidden = true;
+    var main = document.getElementById('main');
+    if (main) { main.removeAttribute('inert'); main.removeAttribute('aria-hidden'); }
+    if (document.body) document.body.classList.add('is-open');
   }, 8000);
 })();
 </script>
@@ -69,6 +70,7 @@
 
 <!-- Ворота: две створки с половинками логотипа, ключ посередине -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" tabindex="-1" data-i18n-attr="aria-label:gate.label" aria-label="KeLin Cosmetics taklifnomasi">
+  <p class="gate__eyebrow" data-i18n="gate.eyebrow"></p>
   <div class="gate__door gate__door--l">
     <div class="logo" aria-hidden="true"><img class="logo__ke mask-x" src="assets/logo/ke.webp" alt="" decoding="async"></div>
     <div class="gate__shade"></div>
@@ -86,32 +88,48 @@
     <button class="gate__keybtn" id="keyBtn" type="button" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, eshikni oching"></button>
     <p class="gate__hint" data-i18n="gate.hint">Kalitni bosing</p>
   </div>
+  <button class="btn btn--cocoa gate__open" id="gateOpen" type="button"><span data-i18n="gate.open"></span><span aria-hidden="true">↗</span></button>
+  <p class="gate__signature" data-i18n="gate.signature"></p>
 </div>
 
 <main id="main">
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" data-i18n-attr="aria-label:hero.logo"><img src="assets/favicon.png" alt="" width="38" height="38"><span><span data-i18n="brand.name"></span><small data-i18n="brand.descriptor"></small></span></a>
+    <nav class="site-nav" data-i18n-attr="aria-label:nav.label">
+      <a href="#story" data-i18n="nav.story"></a><a href="#gallery" data-i18n="nav.gallery"></a><a href="#venue" data-i18n="nav.venue"></a>
+    </nav>
+    <span class="header-location" data-i18n="brand.location"></span>
+  </header>
 
   <!-- Первый экран -->
   <section class="hero" id="top" aria-labelledby="hero-title">
     <img class="petal-corner petal-corner--tl" src="assets/petals/corner-tl.webp" alt="" width="812" height="580" decoding="async">
     <img class="petal-corner petal-corner--br" src="assets/petals/corner-br.webp" alt="" width="627" height="1260" decoding="async">
     <div class="hero__inner">
-      <div class="logo hero__logo" data-in style="--i:0" role="img" data-i18n-attr="aria-label:hero.logo" aria-label="KeLin Cosmetics">
-        <img src="assets/logo/ke.webp" alt="" decoding="async"><img src="assets/logo/lin.webp" alt="" decoding="async"><img src="assets/logo/key.webp" alt="" decoding="async"><img src="assets/logo/cosmetics.webp" alt="" decoding="async">
+      <div class="hero__copy">
+        <p class="eyebrow" data-in style="--i:0"><svg class="little-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><path d="M12 0v24M0 12h24M3.5 3.5l17 17M3.5 20.5l17-17"/></svg><span data-i18n="hero.eyebrow"></span></p>
+        <h1 class="hero__title" id="hero-title" tabindex="-1" data-in style="--i:1"><span data-i18n="hero.line1"></span><em data-i18n="hero.line2"></em></h1>
+        <p class="hero__intro" data-in style="--i:2" data-i18n="hero.intro"></p>
+        <div class="hero__date" data-in style="--i:3">
+          <span class="hero__day" data-bind="day"></span>
+          <div><span class="hero__month" data-bind="monthYear"></span><p class="hero__meta"><span data-bind="weekday"></span><span data-bind="timeAt"></span></p></div>
+          <span class="date-note" id="dateNote" hidden data-i18n="hero.dateNote"></span>
+        </div>
+        <div class="hero__cta" data-in style="--i:4">
+          <a class="btn btn--cocoa" href="#rsvp"><span data-i18n="hero.rsvp"></span><span aria-hidden="true">↗</span></a>
+          <button class="btn btn--ghost" id="calBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-i18n="hero.cal"></span></button>
+        </div>
       </div>
-      <h1 class="hero__title" id="hero-title" tabindex="-1" data-in style="--i:1" data-i18n="hero.title">Sizni doʻkonimiz ochilishiga taklif qilamiz</h1>
-      <div class="hero__date" data-in style="--i:2">
-        <span class="hero__day" data-bind="day"></span>
-        <span class="hero__month" data-bind="monthYear"></span>
-        <span class="hero__rule" aria-hidden="true"></span>
-        <p class="hero__meta"><span data-bind="weekday"></span><span data-bind="timeAt"></span></p>
-        <p class="hero__sub" data-i18n="hero.sub"></p>
-      </div>
-      <div class="hero__cta" data-in style="--i:3">
-        <a class="btn btn--gold" href="#rsvp" data-i18n="hero.rsvp">Kelaman</a>
-        <button class="btn btn--ghost" id="calBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-i18n="hero.cal">Taqvimga qoʻshish</span></button>
+      <div class="hero__portraits" data-in style="--i:2">
+        <span class="portrait-orbit" aria-hidden="true"></span>
+        <figure class="portrait portrait--one"><div class="portrait__window" data-slot="hero-zuhra" data-type="photo"></div><figcaption><span data-i18n="sister.zuhra"></span><span aria-hidden="true">01</span></figcaption></figure>
+        <figure class="portrait portrait--two"><div class="portrait__window" data-slot="hero-fotima" data-type="photo"></div><figcaption><span data-i18n="sister.fotima"></span><span aria-hidden="true">02</span></figcaption></figure>
+        <div class="portrait-seal" aria-hidden="true"><img src="assets/logo/key.webp" alt="" width="72" height="58"></div>
+        <p class="hero__handwritten" data-i18n="hero.handwritten"></p>
       </div>
     </div>
-    <a class="scrollcue" href="#hello" data-in style="--i:4" data-i18n-attr="aria-label:hero.scroll" aria-label="Pastga"></a>
+    <div class="hero__bottom"><span data-i18n="hero.sub"></span><a class="scrollcue" href="#hello"><span data-i18n="hero.discover"></span><span aria-hidden="true">↓</span></a><span data-i18n="hero.bottomNote"></span></div>
   </section>
 
   <!-- Приветствие -->
@@ -127,7 +145,9 @@
   <!-- История сестёр -->
   <section class="sec story" id="story" aria-labelledby="story-title">
     <div class="sec__in" style="max-width:68rem">
+      <p class="eyebrow section-kicker" data-i18n="story.eyebrow"></p>
       <h2 class="sec-title" id="story-title" data-i18n="story.title">Bizning hikoyamiz</h2>
+      <p class="story__lead" data-i18n="story.lead"></p>
       <div class="story__track" id="storyTrack">
         <div class="thread" aria-hidden="true"><div class="thread__fill" id="threadFill"></div><div class="thread__tip" id="threadTip"></div></div>
         <ol class="steps" style="list-style:none;margin:0;padding:0">
@@ -185,6 +205,7 @@
   <!-- Что привезли -->
   <section class="sec sec--center shop" id="shop" aria-labelledby="shop-title">
     <div class="sec__in">
+      <p class="eyebrow" data-i18n="shop.eyebrow"></p>
       <h2 class="sec-title" id="shop-title" data-i18n="shop.title">Biz nimalar olib keldik</h2>
       <p class="sec-lead" data-i18n="shop.lead"></p>
       <ul class="cats">
@@ -201,10 +222,12 @@
   <!-- Галерея -->
   <section class="sec sec--center gal" id="gallery" aria-labelledby="gal-title">
     <div class="sec__in">
+      <p class="eyebrow" data-i18n="gal.eyebrow"></p>
       <h2 class="sec-title" id="gal-title" data-i18n="gal.title">Galereya</h2>
       <p class="sec-lead" data-i18n="gal.lead"></p>
+      <div class="gallery-controls"><span class="gallery-position" id="galleryPosition" aria-live="polite" aria-atomic="true">01 / 05</span><button class="gallery-arrow" id="galleryPrev" type="button" data-i18n-attr="aria-label:gal.prev" aria-controls="galleryTrack"><span aria-hidden="true">←</span></button><button class="gallery-arrow" id="galleryNext" type="button" data-i18n-attr="aria-label:gal.next" aria-controls="galleryTrack"><span aria-hidden="true">→</span></button></div>
     </div>
-    <ul class="gal__track">
+    <ul class="gal__track" id="galleryTrack" tabindex="0" data-i18n-attr="aria-label:gal.title">
       <li class="gal__item"><div class="frame frame--tall"><div class="frame__in" data-slot="gallery-1" data-type="photo"></div></div><p class="gal-cap" data-i18n="slot.gallery-1"></p></li>
       <li class="gal__item"><div class="frame frame--tall"><div class="frame__in" data-slot="gallery-2" data-type="photo"></div></div><p class="gal-cap" data-i18n="slot.gallery-2"></p></li>
       <li class="gal__item"><div class="frame frame--tall"><div class="frame__in" data-slot="gallery-3" data-type="video"></div></div><p class="gal-cap" data-i18n="slot.gallery-3"></p></li>
@@ -231,7 +254,7 @@
         <p class="venue__when" data-bind="when"></p>
         <p class="venue__addr" data-bind="address"></p>
         <div class="mapcard" id="mapCard">
-          <div class="mapcard__idle"><svg class="ic mapcard__pin" aria-hidden="true"><use href="#i-pin"/></svg></div>
+          <div class="mapcard__idle"><span class="mapcard__ring" aria-hidden="true"></span><span class="mapcard__marker"><svg class="ic mapcard__pin" aria-hidden="true"><use href="#i-pin"/></svg></span><span class="mapcard__label" data-i18n="hero.logo"></span><span class="mapcard__coords" data-bind="coordinates"></span><span class="mapcard__action"><span data-i18n="venue.open"></span><span aria-hidden="true">↗</span></span></div>
           <a class="mapcard__tap" id="mapTap" target="_blank" rel="noopener" data-i18n-attr="aria-label:venue.open" aria-label="Xaritani ochish"></a>
         </div>
         <div class="venue__btns">
@@ -247,6 +270,7 @@
     <div class="sec__in" style="max-width:34rem">
       <h2 class="sec-title" id="rsvp-title" data-i18n="rsvp.title">Kelishingizni tasdiqlang</h2>
       <p class="sec-lead" data-i18n="rsvp.lead"></p>
+      <p class="rsvp__notice" id="rsvpNotice" hidden data-i18n="rsvp.demoNotice"></p>
 
       <form class="form" id="rsvpForm" novalidate>
         <div class="field">
@@ -304,6 +328,7 @@
   </section>
 
   <footer class="foot">
+    <p class="foot__invitation" data-i18n="foot.invitation"></p>
     <img class="foot__logo" src="assets/favicon.png" alt="" width="86" height="86" loading="lazy" decoding="async">
     <p class="foot__sign" data-i18n="foot.sign">Hurmat va mehr bilan</p>
     <p class="foot__names">Zuhra &amp; Fotima</p>

@@ -28,7 +28,7 @@ window.KELIN = {
   rsvpEndpoint: '',
 
   // Фото и видео. Положите файл в assets/photos/ и впишите путь, рамка заменится на медиа.
-  // Номера рамок: story-1a, story-1b, story-2, story-3a, story-3b, story-4, gallery-1 … gallery-5
+  // Номера рамок: hero-zuhra, hero-fotima, story-1a, story-1b, story-2, story-3a, story-3b, story-4, gallery-1 … gallery-5
   // (gallery-3 и gallery-5 рассчитаны на видео; у видео можно добавить poster).
   media: {
     // 'story-1a': { src: 'assets/photos/story-1a.jpg' },

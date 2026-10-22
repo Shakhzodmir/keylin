@@ -52,7 +52,8 @@
       timeAt: tr('hero.at') + ' ' + timeText(),
       when: tr('venue.when').replace('{weekday}', weekdayText()).replace('{day}', O.day).replace('{month}', monthText()).replace('{time}', timeText()),
       address: addressText(),
-      phone: (CFG.links || {}).phoneLabel || ''
+      phone: (CFG.links || {}).phoneLabel || '',
+      coordinates: (CFG.coords || {}).lat + '° N · ' + (CFG.coords || {}).lng + '° E'
     };
     $$('[data-bind]').forEach(function (el) {
       var k = el.getAttribute('data-bind');
@@ -183,7 +184,7 @@
   function startPetals() { if (window.KelinPetals) window.KelinPetals.start(); }
 
   function markReady() {
-    if (ready) return;
+    if (ready || opened) return;
     ready = true;
     gate.classList.add('is-ready');
     try { gate.focus({ preventScroll: true }); } catch (e) { /* ничего */ }   // фокус в диалоге без видимой рамки, ключ первым по Tab
@@ -198,7 +199,7 @@
       started = true;
       if (reduceMotion) gate.classList.add('is-skip');
       gate.classList.add('is-play');
-      if (reduceMotion) markReady(); else setTimeout(markReady, 3900);
+      if (reduceMotion) markReady(); else setTimeout(markReady, 1650);
     };
     var imgs = $$('img', gate);
     Promise.all(imgs.map(function (i) {
@@ -208,6 +209,17 @@
 
     gate.addEventListener('click', openGate);
     keyBtn.addEventListener('click', function (e) { e.stopPropagation(); openGate(); });
+    $('#gateOpen').addEventListener('click', function (e) { e.stopPropagation(); openGate(); });
+    gate.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || opened) return;
+      var first = keyBtn;
+      var last = $('#gateOpen');
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === gate)) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !opened) openGate(); });
   }
 
@@ -249,8 +261,42 @@
     if (!ready) gate.classList.add('is-skip');
     gate.classList.add('is-play', 'is-opening');
     if (!reduceMotion) spawnSparks();
-    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, reduceMotion ? 0 : 560);
-    setTimeout(finishGate, reduceMotion ? 300 : 2200);
+    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, reduceMotion ? 0 : 360);
+    setTimeout(finishGate, reduceMotion ? 260 : 1450);
+  }
+
+  /* ───────── галерея: свайп, кнопки и клавиатура ───────── */
+  function setupGallery() {
+    var gallery = $('#galleryTrack');
+    var prev = $('#galleryPrev');
+    var next = $('#galleryNext');
+    var position = $('#galleryPosition');
+    var cards = $$('.gal__item', gallery);
+    if (!gallery || !cards.length) return;
+    function sync() {
+      var max = gallery.scrollWidth - gallery.clientWidth;
+      var left = gallery.scrollLeft;
+      var gap = parseFloat(getComputedStyle(gallery).columnGap) || 0;
+      var width = cards[0].getBoundingClientRect().width + gap;
+      var index = max > 1 && left >= max - 2 ? cards.length - 1 : clamp(Math.round(left / width), 0, cards.length - 1);
+      position.textContent = pad2(index + 1) + ' / ' + pad2(cards.length);
+      prev.disabled = left <= 2;
+      next.disabled = left >= max - 2;
+    }
+    function move(direction) {
+      var distance = cards[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(gallery).columnGap) || 0);
+      gallery.scrollBy({ left: direction * distance, behavior: reduceMotion ? 'instant' : 'smooth' });
+    }
+    prev.addEventListener('click', function () { move(-1); });
+    next.addEventListener('click', function () { move(1); });
+    gallery.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault(); move(e.key === 'ArrowRight' ? 1 : -1);
+      }
+    });
+    gallery.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
   }
 
   /* ───────── нить истории ───────── */
@@ -336,6 +382,25 @@
   }
 
   /* ───────── карта и ссылки ───────── */
+  function setupAnchors() {
+    // В srcdoc-предпросмотре браузер может разрешить #rsvp относительно родительской
+    // страницы и покинуть приглашение. Прокручиваем текущий документ явно.
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!link || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var id = link.getAttribute('href').slice(1);
+      var section = document.getElementById(id);
+      if (!section) return;
+      e.preventDefault();
+      section.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth', block: 'start' });
+      try { history.replaceState(null, '', '#' + encodeURIComponent(id)); } catch (error) { /* изолированное окно без доступа к history */ }
+      if (link.classList.contains('skip')) {
+        section.setAttribute('tabindex', '-1');
+        section.focus({ preventScroll: true });
+      }
+    });
+  }
+
   function setupLinks() {
     var L = CFG.links || {};
     var c = CFG.coords || { lat: 41.288503, lng: 69.344578 };
@@ -346,15 +411,7 @@
     $('#lnkTel').href = 'tel:' + (L.phone || '');
     $('#mapTap').href = $('#mapGoogle').href;
 
-    // карта открыта сразу; браузер сам подгружает её, когда блок подъезжает к экрану
-    var card = $('#mapCard');
-    var f = document.createElement('iframe');
-    f.src = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&z=16&output=embed';
-    f.title = tr('venue.map');
-    f.loading = 'lazy';
-    f.referrerPolicy = 'no-referrer-when-downgrade';
-    f.addEventListener('load', function () { card.classList.add('is-live'); });
-    card.insertBefore(f, card.firstChild);
+    // Открываем точную точку по нажатию: загрузка приглашения не зависит от внешнего iframe.
   }
 
   /* ───────── календарь (.ics) ───────── */
@@ -434,8 +491,8 @@
     $('#thanksText').textContent = tr(att === 'yes' ? 'rsvp.ok.yes' : 'rsvp.ok.no');
     $('#thanksDemo').hidden = !demo;
     form.hidden = true;
-    var t = $('#thanks');
-    t.hidden = false;
+    var thanks = $('#thanks');
+    thanks.hidden = false;
     var b = $('#thanksEdit');
     try { b.focus({ preventScroll: true }); } catch (e) { /* ничего */ }
   }
@@ -493,14 +550,20 @@
     buildSlots();
     applyLang(lang, false);
     setupLinks();
+    setupAnchors();
 
     $$('[data-lang]').forEach(function (b) {
       b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang'), true); });
     });
     $('#calBtn').addEventListener('click', downloadIcs);
-    if (CFG.sample) $('#sampleFlag').hidden = false;
+    if (CFG.sample) {
+      $('#sampleFlag').hidden = false;
+      $('#dateNote').hidden = false;
+    }
+    $('#rsvpNotice').hidden = !!CFG.rsvpEndpoint;
 
     setupForm();
+    setupGallery();
     setupReveal();
     setupFab();
     tick();
