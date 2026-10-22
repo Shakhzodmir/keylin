@@ -41,17 +41,25 @@ window.KELIN = {
 
   // Фото и видео. Положите файл в assets/photos/ и впишите путь, рамка заменится на медиа.
   // Арт: campaign, ritual, origin. Личные фото: hero-zuhra, hero-fotima (сёстры),
-  // story-1a, story-1b, story-2. Галерея: gallery-1 … gallery-5.
-  // (gallery-3 и gallery-5 рассчитаны на видео; у видео можно добавить poster).
+  // story-1a, story-1b, story-2. Галерея: gallery-1 … gallery-5 (у видео можно добавить poster:
+  // 'gallery-3': { src: 'assets/photos/open.mp4', poster: 'assets/photos/open.jpg' } и data-type="video" в index.html).
   media: {
     // Сгенерированные арт-композиции для оформления, не фото реальных товаров или магазина.
     'campaign': { src: 'assets/art/campaign.webp' },
     'ritual': { src: 'assets/art/ritual.webp' },
     'origin': { src: 'assets/art/origin.webp' },
-    'gallery-1': { src: 'assets/art/campaign.webp' },
-    'gallery-2': { src: 'assets/art/ritual.webp' },
-    'gallery-4': { src: 'assets/art/bloom.webp' },
-    // 'story-1a': { src: 'assets/photos/story-1a.jpg' },
-    // 'gallery-3': { src: 'assets/photos/open.mp4', poster: 'assets/photos/open.jpg' }
+
+    // Настоящие фото сестёр. Файлы обрезаны под рамки и очищены от метаданных (геопозиция и т. п.).
+    // Текст на дипломах размыт: там напечатаны полные имена. Не заменять оригиналами.
+    'hero-zuhra': { src: 'assets/photos/portrait-zuhra.webp' },
+    'hero-fotima': { src: 'assets/photos/portrait-fotima.webp' },
+    'story-1a': { src: 'assets/photos/childhood-toddlers.webp' },
+    'story-1b': { src: 'assets/photos/childhood-tubeteika.webp' },
+    'story-2': { src: 'assets/photos/sakura-korea.webp' },
+    'gallery-1': { src: 'assets/photos/sisters-burgundy.webp' },
+    'gallery-2': { src: 'assets/photos/graduation-bears.webp' },
+    'gallery-3': { src: 'assets/photos/sakura-pose.webp' },
+    'gallery-4': { src: 'assets/photos/graduation-red.webp' },
+    'gallery-5': { src: 'assets/photos/graduation-banner.webp' }
   }
 };
