@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" type="image/webp" href="assets/logo/key.webp">
 <link rel="preload" as="font" type="font/ttf" href="assets/fonts/Jost.ttf" crossorigin>
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <script>
 /* Ворота показываем один раз при входе. Прямая ссылка на раздел (#rsvp) или ?skip их пропускает.
    Страховка: если основной скрипт не загрузился, через 8 секунд ворота убираются сами. */
@@ -39,6 +39,10 @@
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M6 18 18 6M6 6h12v12"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
@@ -72,18 +76,17 @@
 <!-- Ворота: две створки с половинками логотипа, ключ посередине -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" tabindex="-1" data-i18n-attr="aria-label:gate.label" aria-label="KeLin Cosmetics taklifnomasi">
   <div class="gate__veil" aria-hidden="true"></div>
+  <div class="gate__portal">
   <div class="gate__frame" aria-hidden="true"></div>
   <p class="gate__eyebrow" data-i18n="gate.eyebrow"></p>
   <div class="gate__door gate__door--l">
-    <span class="gate__panel gate__panel--upper" aria-hidden="true"></span><span class="gate__panel gate__panel--lower" aria-hidden="true"></span>
-    <span class="gate__hinge gate__hinge--top" aria-hidden="true"></span><span class="gate__hinge gate__hinge--bottom" aria-hidden="true"></span>
+    <span class="gate__glass" aria-hidden="true"></span>
     <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
     <div class="logo" aria-hidden="true"><img class="logo__ke mask-x" src="assets/logo/ke.webp" alt="" decoding="async"></div>
     <div class="gate__shade"></div>
   </div>
   <div class="gate__door gate__door--r">
-    <span class="gate__panel gate__panel--upper" aria-hidden="true"></span><span class="gate__panel gate__panel--lower" aria-hidden="true"></span>
-    <span class="gate__hinge gate__hinge--top" aria-hidden="true"></span><span class="gate__hinge gate__hinge--bottom" aria-hidden="true"></span>
+    <span class="gate__glass" aria-hidden="true"></span>
     <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
     <div class="logo" aria-hidden="true"><img class="logo__lin mask-x" src="assets/logo/lin.webp" alt="" decoding="async"></div>
     <div class="gate__shade"></div>
@@ -97,7 +100,8 @@
     <button class="gate__keybtn" id="keyBtn" type="button" aria-describedby="gateHint" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, eshikni oching"></button>
   </div>
   <p class="gate__hint" id="gateHint" data-i18n="gate.hint">Kalitni bosing</p>
-  <button class="btn btn--cocoa gate__open" id="gateOpen" type="button"><span data-i18n="gate.open"></span><span aria-hidden="true">↗</span></button>
+  </div>
+  <button class="btn btn--cocoa gate__open" id="gateOpen" type="button"><span data-i18n="gate.open"></span><span class="btn-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow-up"/></svg></span></button>
   <button class="gate__skip" id="gateSkip" type="button" data-i18n="gate.skip"></button>
   <p class="gate__signature" data-i18n="gate.signature"></p>
 </div>
@@ -121,8 +125,8 @@
         <h1 class="hero__title" id="hero-title" tabindex="-1" data-in style="--i:1"><span data-i18n="hero.line1"></span><em data-i18n="hero.line2"></em></h1>
         <p class="hero__intro" data-in style="--i:2" data-i18n="hero.intro"></p>
         <div class="hero__cta" data-in style="--i:3">
-          <a class="btn btn--cocoa" href="#rsvp"><span data-i18n="hero.rsvp"></span><span aria-hidden="true">↗</span></a>
-          <a class="hero__story-link" href="#story"><span data-i18n="nav.story"></span><span aria-hidden="true">↓</span></a>
+          <a class="btn btn--cocoa" href="#rsvp"><span data-i18n="hero.rsvp"></span><span class="btn-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow-up"/></svg></span></a>
+          <a class="hero__story-link" href="#story"><span data-i18n="nav.story"></span><svg class="ic arrow-down" aria-hidden="true"><use href="#i-arrow-down"/></svg></a>
         </div>
       </div>
       <figure class="campaign" data-in style="--i:2">
@@ -131,7 +135,7 @@
         <figcaption><span data-i18n="hero.artCaption"></span><span aria-hidden="true">01 / KeLin</span></figcaption>
       </figure>
     </div>
-    <div class="hero__bottom"><span data-i18n="hero.sub"></span><a class="scrollcue" href="#hello"><span data-i18n="hero.discover"></span><span aria-hidden="true">↓</span></a><span data-i18n="hero.bottomNote"></span></div>
+    <div class="hero__bottom"><span data-i18n="hero.sub"></span><a class="scrollcue" href="#hello"><span data-i18n="hero.discover"></span><svg class="ic arrow-down" aria-hidden="true"><use href="#i-arrow-down"/></svg></a><span data-i18n="hero.bottomNote"></span></div>
   </section>
 
   <section class="invitation-details" data-i18n-attr="aria-label:details.label">
@@ -230,7 +234,7 @@
       <p class="eyebrow" data-i18n="gal.eyebrow"></p>
       <h2 class="sec-title" id="gal-title" data-i18n="gal.title">Galereya</h2>
       <p class="sec-lead" data-i18n="gal.lead"></p>
-      <div class="gallery-controls"><span class="gallery-position" id="galleryPosition" aria-live="polite" aria-atomic="true">01 / 05</span><button class="gallery-arrow" id="galleryPrev" type="button" data-i18n-attr="aria-label:gal.prev" aria-controls="galleryTrack"><span aria-hidden="true">←</span></button><button class="gallery-arrow" id="galleryNext" type="button" data-i18n-attr="aria-label:gal.next" aria-controls="galleryTrack"><span aria-hidden="true">→</span></button></div>
+      <div class="gallery-controls"><span class="gallery-position" id="galleryPosition" aria-live="polite" aria-atomic="true">01 / 05</span><button class="gallery-arrow" id="galleryPrev" type="button" data-i18n-attr="aria-label:gal.prev" aria-controls="galleryTrack"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg></button><button class="gallery-arrow" id="galleryNext" type="button" data-i18n-attr="aria-label:gal.next" aria-controls="galleryTrack"><svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg></button></div>
     </div>
     <ul class="gal__track" id="galleryTrack" tabindex="0" data-i18n-attr="aria-label:gal.title">
       <li class="gal__item"><div class="frame frame--tall"><div class="frame__in" data-slot="gallery-1" data-type="photo"></div></div><p class="gal-cap" data-i18n="slot.gallery-1"></p></li>
@@ -259,8 +263,7 @@
         <p class="venue__when" data-bind="when"></p>
         <p class="venue__addr" data-bind="address"></p>
         <div class="mapcard" id="mapCard">
-          <div class="mapcard__idle"><span class="mapcard__ring" aria-hidden="true"></span><span class="mapcard__marker"><svg class="ic mapcard__pin" aria-hidden="true"><use href="#i-pin"/></svg></span><span class="mapcard__label" data-i18n="hero.logo"></span><span class="mapcard__coords" data-bind="coordinates"></span><span class="mapcard__action"><span data-i18n="venue.open"></span><span aria-hidden="true">↗</span></span></div>
-          <a class="mapcard__tap" id="mapTap" target="_blank" rel="noopener" data-i18n-attr="aria-label:venue.open" aria-label="Xaritani ochish"></a>
+          <iframe id="venueMap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen data-i18n-attr="title:venue.map"></iframe>
         </div>
         <div class="venue__btns">
           <a class="btn btn--ghost" id="mapGoogle" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg><span data-i18n="venue.google">Google Maps</span></a>
@@ -344,7 +347,7 @@
     <p class="foot__sign" data-i18n="foot.sign">Hurmat va mehr bilan</p>
     <p class="foot__names">Zuhra &amp; Fotima</p>
     <p class="foot__note" data-i18n="foot.note">KeLin Cosmetics, Toshkent</p>
-    <button class="btn btn--ghost share-button" id="shareBtn" type="button"><span data-i18n="share.button"></span><span aria-hidden="true">↗</span></button>
+    <button class="btn btn--ghost share-button" id="shareBtn" type="button"><span data-i18n="share.button"></span><span class="btn-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow-up"/></svg></span></button>
     <p class="share-status" id="shareStatus" role="status" hidden></p>
   </footer>
 </main>
@@ -352,10 +355,10 @@
 <a class="btn btn--gold fab" id="fab" href="#rsvp" data-i18n="hero.rsvp">Kelaman</a>
 
 <noscript><style>.hero [data-in]{opacity:1!important;transform:none!important}</style></noscript>
-<script src="config.js?v=5"></script>
-<script src="i18n.js?v=5"></script>
-<script src="petals.js?v=5"></script>
-<script src="app.js?v=5"></script>
-<script src="motion.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="i18n.js?v=6"></script>
+<script src="petals.js?v=6"></script>
+<script src="app.js?v=6"></script>
+<script src="motion.js?v=6"></script>
 </body>
 </html>

@@ -206,6 +206,8 @@
   }
 
   function prepareGate() {
+    var doorArt = ((CFG.media || {}).campaign || {}).src;
+    if (doorArt) gate.style.setProperty('--door-art', 'url(' + JSON.stringify(doorArt) + ')');
     main.setAttribute('inert', '');
     main.setAttribute('aria-hidden', 'true');
     var started = false;
@@ -214,7 +216,7 @@
       started = true;
       if (reduceMotion) gate.classList.add('is-skip');
       gate.classList.add('is-play');
-      if (reduceMotion) markReady(); else setTimeout(markReady, 1650);
+      if (reduceMotion) markReady(); else setTimeout(markReady, 1050);
     };
     var imgs = $$('img', gate);
     Promise.all(imgs.map(function (i) {
@@ -274,14 +276,14 @@
     startPetals();
     if (reduceMotion) { setTimeout(finishGate, 180); return; }
     var style = getComputedStyle(gate);
-    var duration = parseFloat(style.getPropertyValue('--door-duration')) || 1850;
-    var delay = parseFloat(style.getPropertyValue('--door-delay')) || 470;
+    var duration = parseFloat(style.getPropertyValue('--door-duration')) || 1500;
+    var delay = parseFloat(style.getPropertyValue('--door-delay')) || 280;
     if (canAnimate) {
       gateAnimations = doors.map(function (door, index) {
         return door.animate([
           { transform: 'rotateY(0deg)' },
           { transform: 'rotateY(' + (index === 0 ? -108 : 108) + 'deg)' }
-        ], { duration: duration, delay: delay + index * 60, easing: 'cubic-bezier(0.2, 0.65, 0.2, 1)', fill: 'both' });
+        ], { duration: duration, delay: delay + index * 40, easing: 'cubic-bezier(0.32, 0, 0.16, 1)', fill: 'both' });
       });
       Promise.all(gateAnimations.map(function (animation) {
         return animation.finished.catch(function () { /* пропуск отменяет движение */ });
@@ -446,9 +448,7 @@
     $('#lnkIg').href = L.instagram || '#';
     $('#lnkTg').href = L.telegram || '#';
     $('#lnkTel').href = 'tel:' + (L.phone || '');
-    $('#mapTap').href = $('#mapGoogle').href;
-
-    // Открываем точную точку по нажатию: загрузка приглашения не зависит от внешнего iframe.
+    $('#venueMap').src = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&z=16&output=embed';
   }
 
   /* ───────── поделиться приглашением ───────── */
