@@ -17,6 +17,7 @@ window.KELIN = {
   coords: { lat: 41.288503, lng: 69.344578 },
 
   links: {
+    invitation: 'https://shakhzodmir.github.io/keylin/',
     instagram: 'https://www.instagram.com/keylin_cosmetics/',
     telegram: 'https://t.me/keylincosmetics',
     phone: '+998990552249',
@@ -28,7 +29,7 @@ window.KELIN = {
   rsvpEndpoint: 'https://keylin-rsvp.koreanmadie.workers.dev/rsvp',
 
   // Фото и видео. Положите файл в assets/photos/ и впишите путь, рамка заменится на медиа.
-  // Номера рамок: hero-zuhra, hero-fotima, story-1a, story-1b, story-2, story-3a, story-3b, story-4, gallery-1 … gallery-5
+  // Номера рамок: hero-zuhra, hero-fotima (сёстры), story-1a, story-1b, story-2, gallery-1 … gallery-5
   // (gallery-3 и gallery-5 рассчитаны на видео; у видео можно добавить poster).
   media: {
     // 'story-1a': { src: 'assets/photos/story-1a.jpg' },

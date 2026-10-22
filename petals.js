@@ -75,7 +75,7 @@
     p.vr = rand(-0.6, 0.6);
     p.fl = rand(0.8, 1.8);
     p.fph = rand(0, 6.28);
-    p.a = rand(0.5, 0.9);
+    p.a = rand(0.2, 0.4);
     p.t = 0;
     p.sp = sprites[(Math.random() * sprites.length) | 0];
   }
@@ -86,7 +86,7 @@
     vh = window.innerHeight;
     canvas.width = Math.round(vw * dpr);
     canvas.height = Math.round(vh * dpr);
-    var n = Math.max(9, Math.min(24, Math.round(vw / 55)));
+    var n = Math.max(5, Math.min(10, Math.round(vw / 130)));
     while (items.length < n) { var p = {}; reset(p, true); items.push(p); }
     items.length = n;
   }

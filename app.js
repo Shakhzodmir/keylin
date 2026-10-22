@@ -128,7 +128,16 @@
       } else {
         var box = document.createElement('div');
         box.className = 'slot-empty';
-        box.appendChild(svgIcon(type === 'video' ? 'play' : 'camera'));
+        if (type === 'video') {
+          box.appendChild(svgIcon('play'));
+        } else {
+          var mark = new Image();
+          mark.className = 'slot-mark';
+          mark.src = 'assets/logo/key.webp';
+          mark.alt = '';
+          mark.setAttribute('aria-hidden', 'true');
+          box.appendChild(mark);
+        }
         var label = document.createElement('span');
         label.setAttribute('data-i18n', type === 'video' ? 'slot.video' : 'slot.photo');
         box.appendChild(label);
@@ -181,7 +190,11 @@
   var opened = false;
   var ready = false;
 
-  function startPetals() { if (window.KelinPetals) window.KelinPetals.start(); }
+  function startPetals() {
+    if (!window.KelinPetals) return;
+    window.KelinPetals.start();
+    setTimeout(function () { window.KelinPetals.stop(); }, 8000);
+  }
 
   function markReady() {
     if (ready || opened) return;
@@ -414,6 +427,44 @@
     // Открываем точную точку по нажатию: загрузка приглашения не зависит от внешнего iframe.
   }
 
+  /* ───────── поделиться приглашением ───────── */
+  function setupShare() {
+    var button = $('#shareBtn');
+    var status = $('#shareStatus');
+    button.addEventListener('click', function () {
+      var url = (CFG.links || {}).invitation;
+      if (!url) return;
+      status.hidden = true;
+      if (navigator.share) {
+        navigator.share({ title: tr('hero.logo'), text: tr('share.text'), url: url }).catch(function (error) {
+          if (error.name !== 'AbortError') showShareStatus('share.error', url);
+        });
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          showShareStatus('share.copied');
+        }).catch(function () { showShareStatus('share.error', url); });
+      } else {
+        showShareStatus('share.error', url);
+      }
+    });
+    function showShareStatus(key, url) {
+      status.textContent = '';
+      var message = document.createElement('span');
+      message.setAttribute('data-i18n', key);
+      message.textContent = tr(key);
+      status.appendChild(message);
+      status.hidden = false;
+      if (url) {
+        var link = document.createElement('a');
+        link.id = 'shareFallback';
+        link.href = url;
+        link.textContent = url;
+        status.appendChild(document.createTextNode(' '));
+        status.appendChild(link);
+      }
+    }
+  }
+
   /* ───────── календарь (.ics) ───────── */
   function icsEsc(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
   function icsStamp(ms) {
@@ -551,6 +602,7 @@
     applyLang(lang, false);
     setupLinks();
     setupAnchors();
+    setupShare();
 
     $$('[data-lang]').forEach(function (b) {
       b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang'), true); });

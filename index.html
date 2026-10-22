@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" type="image/webp" href="assets/logo/key.webp">
 <link rel="preload" as="font" type="font/ttf" href="assets/fonts/Jost.ttf" crossorigin>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=3">
 <script>
 /* Ворота показываем один раз при входе. Прямая ссылка на раздел (#rsvp) или ?skip их пропускает.
    Страховка: если основной скрипт не загрузился, через 8 секунд ворота убираются сами. */
@@ -95,7 +95,7 @@
 <main id="main">
 
   <header class="site-header">
-    <a class="wordmark" href="#top" data-i18n-attr="aria-label:hero.logo"><img src="assets/favicon.png" alt="" width="38" height="38"><span><span data-i18n="brand.name"></span><small data-i18n="brand.descriptor"></small></span></a>
+    <a class="wordmark" href="#top" data-i18n-attr="aria-label:hero.logo"><span class="logo wordmark__logo" aria-hidden="true"><img src="assets/logo/ke.webp" alt=""><img src="assets/logo/lin.webp" alt=""><img src="assets/logo/key.webp" alt=""><img src="assets/logo/cosmetics.webp" alt=""></span></a>
     <nav class="site-nav" data-i18n-attr="aria-label:nav.label">
       <a href="#story" data-i18n="nav.story"></a><a href="#gallery" data-i18n="nav.gallery"></a><a href="#venue" data-i18n="nav.venue"></a>
     </nav>
@@ -108,37 +108,37 @@
     <img class="petal-corner petal-corner--br" src="assets/petals/corner-br.webp" alt="" width="627" height="1260" decoding="async">
     <div class="hero__inner">
       <div class="hero__copy">
-        <p class="eyebrow" data-in style="--i:0"><svg class="little-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><path d="M12 0v24M0 12h24M3.5 3.5l17 17M3.5 20.5l17-17"/></svg><span data-i18n="hero.eyebrow"></span></p>
+        <p class="eyebrow" data-in style="--i:0" data-i18n="hero.eyebrow"></p>
+        <div class="logo hero__brand" data-in style="--i:1" role="img" data-i18n-attr="aria-label:hero.logo"><img src="assets/logo/ke.webp" alt=""><img src="assets/logo/lin.webp" alt=""><img src="assets/logo/key.webp" alt=""><img src="assets/logo/cosmetics.webp" alt=""></div>
         <h1 class="hero__title" id="hero-title" tabindex="-1" data-in style="--i:1"><span data-i18n="hero.line1"></span><em data-i18n="hero.line2"></em></h1>
         <p class="hero__intro" data-in style="--i:2" data-i18n="hero.intro"></p>
-        <div class="hero__date" data-in style="--i:3">
-          <span class="hero__day" data-bind="day"></span>
-          <div><span class="hero__month" data-bind="monthYear"></span><p class="hero__meta"><span data-bind="weekday"></span><span data-bind="timeAt"></span></p></div>
-          <span class="date-note" id="dateNote" hidden data-i18n="hero.dateNote"></span>
-        </div>
-        <div class="hero__cta" data-in style="--i:4">
+        <div class="hero__cta" data-in style="--i:3">
           <a class="btn btn--cocoa" href="#rsvp"><span data-i18n="hero.rsvp"></span><span aria-hidden="true">↗</span></a>
-          <button class="btn btn--ghost" id="calBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-i18n="hero.cal"></span></button>
+          <a class="hero__story-link" href="#story"><span data-i18n="nav.story"></span><span aria-hidden="true">↓</span></a>
         </div>
-      </div>
-      <div class="hero__portraits" data-in style="--i:2">
-        <span class="portrait-orbit" aria-hidden="true"></span>
-        <figure class="portrait portrait--one"><div class="portrait__window" data-slot="hero-zuhra" data-type="photo"></div><figcaption><span data-i18n="sister.zuhra"></span><span aria-hidden="true">01</span></figcaption></figure>
-        <figure class="portrait portrait--two"><div class="portrait__window" data-slot="hero-fotima" data-type="photo"></div><figcaption><span data-i18n="sister.fotima"></span><span aria-hidden="true">02</span></figcaption></figure>
-        <div class="portrait-seal" aria-hidden="true"><img src="assets/logo/key.webp" alt="" width="72" height="58"></div>
-        <p class="hero__handwritten" data-i18n="hero.handwritten"></p>
       </div>
     </div>
+    <p class="hero__signature" data-i18n="hero.handwritten"></p>
+    <span class="hero__edition" data-i18n="hero.edition"></span>
     <div class="hero__bottom"><span data-i18n="hero.sub"></span><a class="scrollcue" href="#hello"><span data-i18n="hero.discover"></span><span aria-hidden="true">↓</span></a><span data-i18n="hero.bottomNote"></span></div>
+  </section>
+
+  <section class="invitation-details" data-i18n-attr="aria-label:details.label">
+    <div class="invitation-details__date"><span class="hero__day" data-bind="day"></span><div><span class="hero__month" data-bind="monthYear"></span><span class="date-note" id="dateNote" hidden data-i18n="hero.dateNote"></span></div></div>
+    <div class="invitation-details__item"><span class="eyebrow" data-i18n="details.time"></span><span data-bind="timeAt"></span><small data-bind="weekday"></small></div>
+    <a class="invitation-details__item invitation-details__place" href="#venue"><span class="eyebrow" data-i18n="details.place"></span><span data-i18n="brand.location"></span><small data-i18n="details.route"></small></a>
+    <button class="btn btn--ghost" id="calBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-i18n="hero.cal"></span></button>
   </section>
 
   <!-- Приветствие -->
   <section class="sec sec--center hello" id="hello">
     <div class="sec__in">
-      <p class="hello__names" aria-label="Zuhra va Fotima">Zuhra &amp; Fotima</p>
-      <h2 class="sec-title" data-i18n="hello.title">Aziz mehmon!</h2>
-      <div class="orn" aria-hidden="true"><i></i></div>
-      <p class="hello__text" data-i18n="hello.text"></p>
+      <div class="hello__letter"><p class="eyebrow" data-i18n="hello.eyebrow"></p><h2 class="sec-title" data-i18n="hello.title">Aziz mehmon!</h2><p class="hello__text" data-i18n="hello.text"></p><p class="hello__text hello__afterword" data-i18n="hello.afterword"></p><p class="hello__names" aria-label="Zuhra va Fotima">Zuhra &amp; Fotima</p></div>
+      <div class="sisters">
+        <figure class="sisters__portrait"><div class="portrait__window" data-slot="hero-zuhra" data-type="photo"></div><figcaption><span data-i18n="sister.zuhra"></span><small data-i18n="sister.one"></small></figcaption></figure>
+        <figure class="sisters__portrait"><div class="portrait__window" data-slot="hero-fotima" data-type="photo"></div><figcaption><span data-i18n="sister.fotima"></span><small data-i18n="sister.two"></small></figcaption></figure>
+        <span class="sisters__ampersand" aria-hidden="true">&amp;</span>
+      </div>
     </div>
   </section>
 
@@ -167,23 +167,6 @@
           <span class="step__node" aria-hidden="true"></span>
           <div class="step__media"><div class="frame"><div class="frame__in" data-slot="story-2" data-type="photo"></div></div></div>
           <div class="step__text"><h3 class="step__title" data-i18n="story.2.t"></h3><p class="step__p" data-i18n="story.2.p"></p></div>
-        </li>
-
-        <li class="step">
-          <span class="step__node" aria-hidden="true"></span>
-          <div class="step__media">
-            <div class="pair">
-              <figure><div class="frame frame--pair"><div class="frame__in" data-slot="story-3a" data-type="photo"></div></div><figcaption class="gal-cap" data-i18n="slot.story-3a"></figcaption></figure>
-              <figure><div class="frame frame--pair"><div class="frame__in" data-slot="story-3b" data-type="photo"></div></div><figcaption class="gal-cap" data-i18n="slot.story-3b"></figcaption></figure>
-            </div>
-          </div>
-          <div class="step__text"><h3 class="step__title" data-i18n="story.3.t"></h3><p class="step__p" data-i18n="story.3.p"></p></div>
-        </li>
-
-        <li class="step">
-          <span class="step__node" aria-hidden="true"></span>
-          <div class="step__media"><div class="frame"><div class="frame__in" data-slot="story-4" data-type="photo"></div></div></div>
-          <div class="step__text"><h3 class="step__title" data-i18n="story.4.t"></h3><p class="step__p" data-i18n="story.4.p"></p></div>
         </li>
 
         <li class="step">
@@ -267,11 +250,16 @@
 
   <!-- Ответ гостя -->
   <section class="sec sec--center rsvp" id="rsvp" aria-labelledby="rsvp-title">
-    <div class="sec__in" style="max-width:34rem">
+    <div class="sec__in rsvp__layout">
+      <div class="rsvp__intro">
+      <p class="eyebrow" data-i18n="rsvp.eyebrow"></p>
       <h2 class="sec-title" id="rsvp-title" data-i18n="rsvp.title">Kelishingizni tasdiqlang</h2>
       <p class="sec-lead" data-i18n="rsvp.lead"></p>
       <p class="rsvp__notice" id="rsvpNotice" hidden data-i18n="rsvp.demoNotice"></p>
+      <p class="rsvp__signature" data-i18n="hero.handwritten"></p>
+      </div>
 
+      <div class="rsvp__panel">
       <form class="form" id="rsvpForm" novalidate>
         <div class="field">
           <label for="rsvpName" data-i18n="rsvp.name">Ismingiz</label>
@@ -312,6 +300,7 @@
         <p class="thanks__demo" id="thanksDemo" data-i18n="rsvp.ok.demo" hidden></p>
         <button class="btn btn--ghost" id="thanksEdit" type="button" data-i18n="rsvp.edit">Javobni oʻzgartirish</button>
       </div>
+      </div>
     </div>
   </section>
 
@@ -333,15 +322,17 @@
     <p class="foot__sign" data-i18n="foot.sign">Hurmat va mehr bilan</p>
     <p class="foot__names">Zuhra &amp; Fotima</p>
     <p class="foot__note" data-i18n="foot.note">KeLin Cosmetics, Toshkent</p>
+    <button class="btn btn--ghost share-button" id="shareBtn" type="button"><span data-i18n="share.button"></span><span aria-hidden="true">↗</span></button>
+    <p class="share-status" id="shareStatus" role="status" hidden></p>
   </footer>
 </main>
 
 <a class="btn btn--gold fab" id="fab" href="#rsvp" data-i18n="hero.rsvp">Kelaman</a>
 
 <noscript><style>.hero [data-in]{opacity:1!important;transform:none!important}</style></noscript>
-<script src="config.js"></script>
-<script src="i18n.js"></script>
-<script src="petals.js"></script>
-<script src="app.js"></script>
+<script src="config.js?v=3"></script>
+<script src="i18n.js?v=3"></script>
+<script src="petals.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
