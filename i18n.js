@@ -22,6 +22,7 @@ window.KELIN_I18N = {
     'gate.hint': 'Kalitni bosing',
     'gate.eyebrow': 'Siz uchun alohida taklif',
     'gate.open': 'Taklifnomani ochish',
+    'gate.skip': 'Oʻtkazib yuborish',
     'gate.signature': 'Zuhra va Fotimadan, mehr bilan',
 
     'hero.logo': 'KeLin Cosmetics',
@@ -179,6 +180,7 @@ window.KELIN_I18N = {
     'gate.hint': 'Нажмите на ключ',
     'gate.eyebrow': 'Для вас — особенное приглашение',
     'gate.open': 'Открыть приглашение',
+    'gate.skip': 'Пропустить',
     'gate.signature': 'От Зухры и Фотимы, с любовью',
 
     'hero.logo': 'KeLin Cosmetics',

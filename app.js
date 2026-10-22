@@ -189,11 +189,12 @@
   var gateOn = root.classList.contains('is-locked');
   var opened = false;
   var ready = false;
+  var gateFinished = false;
+  var gateAnimations = [];
 
   function startPetals() {
     if (!window.KelinPetals) return;
     window.KelinPetals.start();
-    setTimeout(function () { window.KelinPetals.stop(); }, 8000);
   }
 
   function markReady() {
@@ -223,40 +224,24 @@
     gate.addEventListener('click', openGate);
     keyBtn.addEventListener('click', function (e) { e.stopPropagation(); openGate(); });
     $('#gateOpen').addEventListener('click', function (e) { e.stopPropagation(); openGate(); });
+    $('#gateSkip').addEventListener('click', function (e) { e.stopPropagation(); skipGate(); });
     gate.addEventListener('keydown', function (e) {
-      if (e.key !== 'Tab' || opened) return;
+      if (e.key !== 'Tab' || gateFinished) return;
+      if (opened) { e.preventDefault(); $('#gateSkip').focus(); return; }
       var first = keyBtn;
-      var last = $('#gateOpen');
+      var last = $('#gateSkip');
       if (e.shiftKey && (document.activeElement === first || document.activeElement === gate)) {
         e.preventDefault(); last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
         e.preventDefault(); first.focus();
       }
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !opened) openGate(); });
-  }
-
-  function spawnSparks() {
-    var stage = $('#gateStage');
-    var colors = ['#FCBC0C', '#FFD65A', '#FFF3C4', '#F87C78'];
-    var made = [];
-    for (var i = 0; i < 18; i++) {
-      var s = document.createElement('i');
-      var ang = Math.random() * Math.PI * 2;
-      var dist = 60 + Math.random() * 150;
-      s.className = 'spark';
-      s.style.setProperty('--dx', (Math.cos(ang) * dist).toFixed(1) + 'px');
-      s.style.setProperty('--dy', (Math.sin(ang) * dist).toFixed(1) + 'px');
-      s.style.setProperty('--s', (3 + Math.random() * 5).toFixed(1) + 'px');
-      s.style.setProperty('--c', colors[i % colors.length]);
-      s.style.setProperty('--d', (0.32 + Math.random() * 0.2).toFixed(2) + 's');
-      stage.appendChild(s);
-      made.push(s);
-    }
-    setTimeout(function () { made.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); }, 2200);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !gateFinished) skipGate(); });
   }
 
   function finishGate() {
+    if (gateFinished) return;
+    gateFinished = true;
     gate.hidden = true;
     root.classList.remove('is-locked');
     main.removeAttribute('inert');
@@ -268,14 +253,52 @@
     updateFab();
   }
 
+  function skipGate() {
+    opened = true;
+    body.classList.add('is-open');
+    finishGate();
+    gateAnimations.forEach(function (animation) { animation.cancel(); });
+    startPetals();
+  }
+
   function openGate() {
     if (opened) return;
     opened = true;
     if (!ready) gate.classList.add('is-skip');
+    var doors = $$('.gate__door', gate);
+    var canAnimate = !reduceMotion && doors.every(function (door) { return !!door.animate; });
+    if (canAnimate) gate.classList.add('is-animated');
     gate.classList.add('is-play', 'is-opening');
-    if (!reduceMotion) spawnSparks();
-    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, reduceMotion ? 0 : 360);
-    setTimeout(finishGate, reduceMotion ? 260 : 1450);
+    body.classList.add('is-open');
+    startPetals();
+    if (reduceMotion) { setTimeout(finishGate, 180); return; }
+    var style = getComputedStyle(gate);
+    var duration = parseFloat(style.getPropertyValue('--door-duration')) || 1850;
+    var delay = parseFloat(style.getPropertyValue('--door-delay')) || 470;
+    if (canAnimate) {
+      gateAnimations = doors.map(function (door, index) {
+        return door.animate([
+          { transform: 'rotateY(0deg)' },
+          { transform: 'rotateY(' + (index === 0 ? -108 : 108) + 'deg)' }
+        ], { duration: duration, delay: delay + index * 60, easing: 'cubic-bezier(0.2, 0.65, 0.2, 1)', fill: 'both' });
+      });
+      Promise.all(gateAnimations.map(function (animation) {
+        return animation.finished.catch(function () { /* пропуск отменяет движение */ });
+      })).then(finishGate);
+    } else {
+      var remaining = doors.length;
+      doors.forEach(function (door) {
+        var complete = function (event) {
+          if (event.target !== door || event.propertyName !== 'transform') return;
+          door.removeEventListener('transitionend', complete);
+          remaining--;
+          if (!remaining) finishGate();
+        };
+        door.addEventListener('transitionend', complete);
+      });
+    }
+    // Страховка для браузера, не сообщившего об окончании анимации.
+    setTimeout(finishGate, duration + delay + 400);
   }
 
   /* ───────── галерея: свайп, кнопки и клавиатура ───────── */

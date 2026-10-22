@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" type="image/webp" href="assets/logo/key.webp">
 <link rel="preload" as="font" type="font/ttf" href="assets/fonts/Jost.ttf" crossorigin>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <script>
 /* Ворота показываем один раз при входе. Прямая ссылка на раздел (#rsvp) или ?skip их пропускает.
    Страховка: если основной скрипт не загрузился, через 8 секунд ворота убираются сами. */
@@ -67,15 +67,24 @@
 <div class="sample-flag" id="sampleFlag" hidden data-i18n="sample.flag">Sinov variant. Sana va matnlar namunaviy.</div>
 
 <canvas id="petals" aria-hidden="true"></canvas>
+<div class="reading-progress" aria-hidden="true"></div>
 
 <!-- Ворота: две створки с половинками логотипа, ключ посередине -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" tabindex="-1" data-i18n-attr="aria-label:gate.label" aria-label="KeLin Cosmetics taklifnomasi">
+  <div class="gate__veil" aria-hidden="true"></div>
+  <div class="gate__frame" aria-hidden="true"></div>
   <p class="gate__eyebrow" data-i18n="gate.eyebrow"></p>
   <div class="gate__door gate__door--l">
+    <span class="gate__panel gate__panel--upper" aria-hidden="true"></span><span class="gate__panel gate__panel--lower" aria-hidden="true"></span>
+    <span class="gate__hinge gate__hinge--top" aria-hidden="true"></span><span class="gate__hinge gate__hinge--bottom" aria-hidden="true"></span>
+    <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
     <div class="logo" aria-hidden="true"><img class="logo__ke mask-x" src="assets/logo/ke.webp" alt="" decoding="async"></div>
     <div class="gate__shade"></div>
   </div>
   <div class="gate__door gate__door--r">
+    <span class="gate__panel gate__panel--upper" aria-hidden="true"></span><span class="gate__panel gate__panel--lower" aria-hidden="true"></span>
+    <span class="gate__hinge gate__hinge--top" aria-hidden="true"></span><span class="gate__hinge gate__hinge--bottom" aria-hidden="true"></span>
+    <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
     <div class="logo" aria-hidden="true"><img class="logo__lin mask-x" src="assets/logo/lin.webp" alt="" decoding="async"></div>
     <div class="gate__shade"></div>
   </div>
@@ -85,10 +94,11 @@
       <span class="gate__glow"></span>
     </div>
     <img class="logo__cos mask-x" src="assets/logo/cosmetics.webp" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none">
-    <button class="gate__keybtn" id="keyBtn" type="button" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, eshikni oching"></button>
-    <p class="gate__hint" data-i18n="gate.hint">Kalitni bosing</p>
+    <button class="gate__keybtn" id="keyBtn" type="button" aria-describedby="gateHint" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, eshikni oching"></button>
   </div>
+  <p class="gate__hint" id="gateHint" data-i18n="gate.hint">Kalitni bosing</p>
   <button class="btn btn--cocoa gate__open" id="gateOpen" type="button"><span data-i18n="gate.open"></span><span aria-hidden="true">↗</span></button>
+  <button class="gate__skip" id="gateSkip" type="button" data-i18n="gate.skip"></button>
   <p class="gate__signature" data-i18n="gate.signature"></p>
 </div>
 
@@ -330,9 +340,10 @@
 <a class="btn btn--gold fab" id="fab" href="#rsvp" data-i18n="hero.rsvp">Kelaman</a>
 
 <noscript><style>.hero [data-in]{opacity:1!important;transform:none!important}</style></noscript>
-<script src="config.js?v=3"></script>
-<script src="i18n.js?v=3"></script>
-<script src="petals.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="i18n.js?v=4"></script>
+<script src="petals.js?v=4"></script>
+<script src="app.js?v=4"></script>
+<script src="motion.js?v=4"></script>
 </body>
 </html>

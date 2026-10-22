@@ -168,11 +168,19 @@ main { position: relative; z-index: 1; overflow-x: clip; }
 
 /* ───────── ворота: две створки с половинками логотипа ───────── */
 .gate {
+  --door-duration: 1850ms;
+  --door-delay: 470ms;
+  --logo-w: min(78vw, 480px, calc(60svh * var(--logo-ar)));
+  --logo-left: calc(50vw - var(--logo-keyx) * var(--logo-w));
   position: fixed; inset: 0; z-index: 200; overflow: hidden; cursor: pointer; touch-action: none;
-  perspective: 1700px; -webkit-tap-highlight-color: transparent;
+  perspective: 1800px; perspective-origin: 50% 46%; -webkit-tap-highlight-color: transparent;
 }
 html:not(.js) .gate { display: none; }
 .gate:focus { outline: none; }
+.gate__veil { position: absolute; inset: 0; background: #30190E; opacity: 0.28; transition: opacity 1600ms ease-out 400ms; }
+.gate.is-opening .gate__veil { opacity: 0; }
+.gate__frame { position: absolute; z-index: 5; inset: 0; border: clamp(9px, 1.4vw, 20px) solid #CFB098; pointer-events: none; box-shadow: inset 0 0 0 2px #FFF1DA, inset 0 0 18px 7px rgba(58, 30, 18, 0.24); }
+.gate.is-opening .gate__frame { opacity: 0; transition: opacity 500ms ease-out 1750ms; }
 
 .logo { position: relative; width: var(--logo-w); aspect-ratio: var(--logo-ar); pointer-events: none; }
 .logo img {
@@ -181,32 +189,52 @@ html:not(.js) .gate { display: none; }
 }
 
 .gate__door {
-  position: absolute; top: 0; bottom: 0; overflow: visible; backface-visibility: hidden; will-change: transform;
+  position: absolute; top: 0; bottom: 0; width: 50%; overflow: visible; backface-visibility: hidden; transform-style: preserve-3d; will-change: transform;
   background:
-    radial-gradient(120% 90% at 50% 38%, #FFF0EE 0%, var(--petal) 52%, #F9D8D5 100%);
-  transition: transform 1050ms var(--ease-door) 280ms;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.34), transparent 16%, transparent 84%, rgba(158, 103, 75, 0.08)),
+    radial-gradient(120% 90% at 50% 38%, #FFF3EE 0%, #F7DCD3 100%);
+  transition: transform var(--door-duration) cubic-bezier(0.2, 0.65, 0.2, 1) var(--door-delay);
 }
-.gate__door--l { left: 0; width: var(--seam); transform-origin: 0 50%; box-shadow: inset -22px 0 28px -22px rgba(120, 60, 40, 0.22); }
-.gate__door--r { left: var(--seam); right: 0; transform-origin: 100% 50%; box-shadow: inset 22px 0 28px -22px rgba(120, 60, 40, 0.22); }
+.gate__door--l { left: 0; transform-origin: 0 50%; box-shadow: inset -3px 0 3px rgba(91, 53, 34, 0.22), 12px 0 32px rgba(58, 30, 18, 0.16); }
+.gate__door--r { right: 0; transform-origin: 100% 50%; box-shadow: inset 3px 0 3px rgba(91, 53, 34, 0.22), -12px 0 32px rgba(58, 30, 18, 0.16); transition-delay: calc(var(--door-delay) + 60ms); }
+.gate.is-animated .gate__door { transition: none; }
 
-.gate__door::before {          /* бумажная фактура */
-  content: ""; position: absolute; inset: 0; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .62  0 0 0 0 .36  0 0 0 0 .32  0 0 0 .34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+.gate__door::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(166, 112, 83, 0.025) 3px 4px);
 }
-.gate__door::after {           /* золотая рамка филёнки */
-  content: ""; position: absolute; inset: 14px; border: 1px solid rgba(252, 188, 12, 0.6); border-radius: 4px; pointer-events: none;
+.gate__door::after {
+  content: ''; position: absolute; inset: clamp(22px, 3vw, 44px) 20px; border: 1px solid #D5B18E; pointer-events: none;
+  box-shadow: 0 0 0 3px rgba(255, 248, 238, 0.65), 0 0 0 4px rgba(174, 126, 84, 0.18);
 }
+.gate__panel { position: absolute; left: clamp(33px, 5vw, 75px); right: clamp(33px, 5vw, 75px); border: 1px solid #CDA889; background: linear-gradient(120deg, rgba(255, 251, 246, 0.24), rgba(194, 137, 107, 0.07)); box-shadow: inset 3px 3px 10px rgba(125, 79, 51, 0.08), 0 0 0 4px rgba(255, 248, 238, 0.65), 0 0 0 5px rgba(174, 126, 84, 0.18); pointer-events: none; }
+.gate__panel--upper { top: 12%; bottom: 39%; border-radius: 50% 50% 0 0 / 25% 25% 0 0; }
+.gate__panel--lower { top: 75%; bottom: 12%; }
+.gate__hinge { position: absolute; width: 9px; height: 42px; border-radius: 3px; background: linear-gradient(90deg, #9D7346, #F7DA91 45%, #AD814C); box-shadow: 2px 1px 3px rgba(58, 30, 18, 0.25); }
+.gate__door--l .gate__hinge { left: 10px; }
+.gate__door--r .gate__hinge { right: 10px; }
+.gate__hinge--top { top: 22%; }
+.gate__hinge--bottom { bottom: 22%; }
+.gate__handle { position: absolute; top: 57%; height: clamp(65px, 11vh, 110px); width: 8px; border-radius: 5px; background: linear-gradient(90deg, #AB793F, #FFE5A0 40%, #B8884B); box-shadow: 4px 2px 5px rgba(69, 40, 24, 0.22); }
+.gate__door--l .gate__handle { right: 27px; }
+.gate__door--r .gate__handle { left: 27px; }
+.gate__handle::before, .gate__handle::after { content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%; left: -4px; background: linear-gradient(135deg, #EACB88, #AC7B45); z-index: -1; }
+.gate__handle::before { top: 5px; }
+.gate__handle::after { bottom: 5px; }
+.gate__edge { position: absolute; inset-block: 0; width: 14px; background: linear-gradient(90deg, #B68C6C, #E5C2A7); backface-visibility: visible; }
+.gate__door--l .gate__edge { left: 100%; transform-origin: left; transform: rotateY(90deg); }
+.gate__door--r .gate__edge { right: 100%; transform-origin: right; transform: rotateY(-90deg); }
 .gate__shade {
   position: absolute; inset: 0; background: linear-gradient(90deg, rgba(58, 30, 18, 0.5), rgba(58, 30, 18, 0.2));
-  opacity: 0; transition: opacity 1000ms ease-out 280ms; pointer-events: none;
+  opacity: 0; transition: opacity var(--door-duration) ease-out var(--door-delay); pointer-events: none;
 }
 
 /* общие позиции логотипа: по центру, чуть выше середины */
 .gate__door .logo,
 .gate__stage { position: absolute; top: 46%; margin-top: calc(var(--logo-w) / var(--logo-ar) / -2); }
-.gate__door--l .logo { left: calc(50vw - var(--logo-w) / 2); }
-.gate__door--r .logo { left: calc(50vw - var(--logo-w) / 2 - var(--seam)); }
-.gate__stage { left: calc(50vw - var(--logo-w) / 2); width: var(--logo-w); aspect-ratio: var(--logo-ar); }
+.gate__door--l .logo { left: var(--logo-left); }
+.gate__door--r .logo { left: calc(var(--logo-left) - 50vw); }
+.gate__stage { left: var(--logo-left); width: var(--logo-w); aspect-ratio: var(--logo-ar); }
 .gate__stage > .gate__bob, .gate__stage > .logo__cos { position: absolute; inset: 0; }
 
 /* кисть: проявление слоя, мягкий край */
@@ -254,8 +282,8 @@ html:not(.js) .gate { display: none; }
 .gate.is-opening .gate__glow { animation: glowFlare 1000ms var(--ease-out) both; }
 
 .gate__hint {
-  position: absolute; left: 0; right: 0; top: 100%; margin-top: 22px; text-align: center;
-  font-size: 0.9375rem; font-weight: 300; letter-spacing: 0.14em; color: var(--ink);
+  position: absolute; z-index: 2; left: 0; right: 0; top: 68.5%; margin-top: 12px; text-align: center;
+  font-size: 0.75rem; font-weight: 400; letter-spacing: 0.12em; color: var(--ink);
   opacity: 0; transform: translateY(6px); transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
 }
 .gate.is-ready .gate__hint { opacity: 1; transform: none; }
@@ -264,39 +292,32 @@ html:not(.js) .gate { display: none; }
 .gate__open { position: absolute; z-index: 4; bottom: 12%; left: 50%; transform: translateX(-50%); gap: 28px; white-space: nowrap; }
 .gate__open:active { transform: translateX(-50%) scale(0.97); }
 .gate__signature { position: absolute; z-index: 2; bottom: 5.5%; left: 20px; right: 20px; text-align: center; font-size: 0.8125rem; }
+.gate__skip { position: absolute; z-index: 6; top: 23px; left: var(--gutter); min-height: 44px; border: 0; padding: 0 10px; background: rgba(255, 248, 245, 0.7); color: var(--ink); font-size: 0.75rem; cursor: pointer; pointer-events: auto; text-underline-offset: 4px; }
+.gate__skip:hover { text-decoration: underline; }
 .gate.is-opening .gate__eyebrow, .gate.is-opening .gate__open, .gate.is-opening .gate__signature { opacity: 0; transition: opacity 240ms ease; }
 
-/* поворот ключа вокруг своего стержня */
-.gate .logo__key { transform-origin: calc(var(--logo-keyx) * 100%) 50%; }
+/* Короткое отпирание замка, затем движение створок на внешних петлях. */
+.gate .logo__key { transform-origin: calc(var(--logo-keyx) * 100%) 68%; }
 @keyframes keyTurn {
-  0% { transform: perspective(1000px) rotateY(0) scale(1); }
-  100% { transform: perspective(1000px) rotateY(360deg) scale(1.06); }
+  0% { transform: rotateZ(0deg); }
+  65% { transform: rotateZ(-24deg) translateY(2px); }
+  100% { transform: rotateZ(-32deg) translateY(4px); }
 }
 .gate.is-opening .logo__key {
   -webkit-mask-position: 0 0; mask-position: 0 0;
-  animation: keyTurn 480ms var(--ease-in-out) both;
+  animation: keyTurn 470ms cubic-bezier(0.22, 0.65, 0.3, 1) both;
 }
 
 /* ключ и «COSMETICS» гаснут, когда створки уже пошли, и до того, как покажется первый экран */
 .gate.is-opening .gate__stage {
-  opacity: 0; transform: scale(1.06);
-  transition: opacity 280ms ease-out 420ms, transform 500ms var(--ease-out) 400ms;
+  opacity: 0;
+  transition: opacity 240ms ease-out 260ms;
 }
-.gate.is-opening .gate__door--l { transform: rotateY(104deg); }
-.gate.is-opening .gate__door--r { transform: rotateY(-104deg); }
-.gate.is-opening .gate__shade { opacity: 1; }
+.gate.is-opening .mask-x { animation: none; -webkit-mask-position: 0 0; mask-position: 0 0; }
+.gate.is-opening .gate__door--l { transform: rotateY(-108deg); }
+.gate.is-opening .gate__door--r { transform: rotateY(108deg); }
+.gate.is-opening .gate__shade { opacity: 0.4; }
 .gate.is-opening { pointer-events: none; }
-
-.spark {
-  position: absolute; left: calc(var(--logo-keyx) * 100%); top: 16%; z-index: 4; pointer-events: none;
-  width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%;
-  background: var(--c); box-shadow: 0 0 10px var(--c); opacity: 0;
-  animation: spark 1000ms var(--ease-out) var(--d) forwards;
-}
-@keyframes spark {
-  0% { opacity: 1; transform: translate(0, 0) scale(1); }
-  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.2); }
-}
 
 /* ───────── первый экран ───────── */
 .hero {
@@ -783,10 +804,28 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
 }
 
 /* ───────── уменьшенное движение ───────── */
+.reading-progress { position: fixed; z-index: 230; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, var(--coral), var(--gold)); transform: scaleX(var(--reading-progress, 0)); transform-origin: left; pointer-events: none; }
+.is-locked .reading-progress { opacity: 0; }
+.motion-ready [data-motion] { opacity: 0; transform: translate3d(0, 32px, 0); transition: opacity 720ms var(--ease-out), transform 900ms var(--ease-out); transition-delay: var(--motion-delay, 0ms); }
+.motion-ready [data-motion="portrait"]:nth-child(1) { transform: translate3d(-24px, 28px, 0) rotate(-4deg); }
+.motion-ready [data-motion="portrait"]:nth-child(2) { transform: translate3d(24px, 28px, 0) rotate(4deg); }
+.motion-ready [data-motion].is-visible, .motion-ready [data-motion]:focus-within { opacity: 1; transform: none; }
+.is-tiltable { transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); transition: transform 280ms var(--ease-out); }
+.is-tiltable:hover { will-change: transform; }
+.gal__track { cursor: grab; }
+.gal__track.is-dragging { cursor: grabbing; user-select: none; scroll-snap-type: none; scroll-behavior: auto; }
+.hero__brand { translate: calc(var(--pointer-x, 0px) * 0.3) calc(var(--pointer-y, 0px) * 0.3); }
+.petal-corner--tl { translate: calc(var(--pointer-x, 0px) * -0.5) calc(var(--hero-parallax, 0px) + var(--pointer-y, 0px) * -0.5); }
+.petal-corner--br { translate: calc(var(--pointer-x, 0px) * 0.65) calc(var(--hero-parallax, 0px) * -0.8 + var(--pointer-y, 0px) * 0.65); }
+@media (hover: hover) and (pointer: fine) {
+  .cat { transition: translate 260ms var(--ease-out), color 260ms ease; }
+  .cat:hover { translate: 0 -6px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .gate__door { transition: none; }
-  .gate.is-opening { opacity: 0; transition: opacity 260ms ease-out; }
+  .gate.is-opening { opacity: 0; transition: opacity 180ms ease-out; }
   .gate.is-opening .gate__door--l, .gate.is-opening .gate__door--r { transform: none; }
   .gate.is-opening .logo__key { animation: none; }
   .gate .gate__bob, .gate .gate__glow { animation: none !important; }
@@ -795,6 +834,10 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
   .js .step .step__text { opacity: 1; transform: none; }
   .js .hero [data-in] { opacity: 1; transform: none; }
   .js body.is-open .hero [data-in] { transition: none; }
+  .motion-ready [data-motion], .motion-ready [data-motion="portrait"] { opacity: 1; transform: none; transition: none; }
+  .hero__brand, .petal-corner { translate: none; }
+  .cat:hover { translate: none; }
+  .is-tiltable { transform: none; transition: none; }
   .collapse { transition: none; }
   .cd__num.tick { animation: none; }
   .thanks:not([hidden]), .thanks:not([hidden]) .ic path { animation: none; stroke-dashoffset: 0; }
