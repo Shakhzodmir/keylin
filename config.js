@@ -23,9 +23,9 @@ window.KELIN = {
     phoneLabel: '+998 99 055-22-49'
   },
 
-  // Адрес, куда уходят ответы гостей (Cloudflare Worker, который пересылает их в Telegram).
-  // Пока пусто: форма работает, но ответ никуда не отправляется (демо-режим).
-  rsvpEndpoint: '',
+  // Адрес, куда уходят ответы гостей: Cloudflare Worker (папка worker/), он пересылает их в Telegram.
+  // Если очистить строку, форма перейдёт в демо-режим: ответ никуда не отправляется.
+  rsvpEndpoint: 'https://keylin-rsvp.koreanmadie.workers.dev/rsvp',
 
   // Фото и видео. Положите файл в assets/photos/ и впишите путь, рамка заменится на медиа.
   // Номера рамок: hero-zuhra, hero-fotima, story-1a, story-1b, story-2, story-3a, story-3b, story-4, gallery-1 … gallery-5
