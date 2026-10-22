@@ -121,7 +121,8 @@
         } else {
           var img = new Image();
           img.src = m.src;
-          img.loading = 'lazy';
+          img.loading = slot.getAttribute('data-priority') === 'high' ? 'eager' : 'lazy';
+          if (slot.getAttribute('data-priority') === 'high') img.fetchPriority = 'high';
           img.decoding = 'async';
           slot.appendChild(img);
         }

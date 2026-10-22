@@ -53,6 +53,7 @@
       ['.hello__letter', 'up', 0],
       ['.sisters__portrait', 'portrait', 120],
       ['.shop .sec-title', 'up', 0],
+      ['.shop__art, .origin__content', 'up', 0],
       ['.cat', 'up', 60],
       ['.gal .sec-title', 'up', 0],
       ['.gal__item', 'up', 80],
@@ -71,7 +72,7 @@
 
   function setupTilt() {
     if (reduce || !finePointer) return;
-    document.querySelectorAll('.sisters .portrait__window, .gal .frame').forEach(function (frame) {
+    document.querySelectorAll('.sisters .portrait__window, .gal .frame, .shop__image').forEach(function (frame) {
       var bounds, frameId = 0, latest;
       frame.classList.add('is-tiltable');
       frame.addEventListener('pointerenter', function () { bounds = frame.getBoundingClientRect(); });

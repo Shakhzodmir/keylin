@@ -29,9 +29,17 @@ window.KELIN = {
   rsvpEndpoint: 'https://keylin-rsvp.koreanmadie.workers.dev/rsvp',
 
   // Фото и видео. Положите файл в assets/photos/ и впишите путь, рамка заменится на медиа.
-  // Номера рамок: hero-zuhra, hero-fotima (сёстры), story-1a, story-1b, story-2, gallery-1 … gallery-5
+  // Арт: campaign, ritual, origin. Личные фото: hero-zuhra, hero-fotima (сёстры),
+  // story-1a, story-1b, story-2. Галерея: gallery-1 … gallery-5.
   // (gallery-3 и gallery-5 рассчитаны на видео; у видео можно добавить poster).
   media: {
+    // Сгенерированные арт-композиции для оформления, не фото реальных товаров или магазина.
+    'campaign': { src: 'assets/art/campaign.webp' },
+    'ritual': { src: 'assets/art/ritual.webp' },
+    'origin': { src: 'assets/art/origin.webp' },
+    'gallery-1': { src: 'assets/art/campaign.webp' },
+    'gallery-2': { src: 'assets/art/ritual.webp' },
+    'gallery-4': { src: 'assets/art/bloom.webp' },
     // 'story-1a': { src: 'assets/photos/story-1a.jpg' },
     // 'gallery-3': { src: 'assets/photos/open.mp4', poster: 'assets/photos/open.jpg' }
   }
