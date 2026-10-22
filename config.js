@@ -21,8 +21,19 @@ window.KELIN = {
     instagram: 'https://www.instagram.com/keylin_cosmetics/',
     telegram: 'https://t.me/keylincosmetics',
     phone: '+998990552249',
-    phoneLabel: '+998 99 055-22-49'
+    phoneLabel: '+998 99 055-22-49',
+    telegramContact: 'https://t.me/KeylinFZ',
+    telegramContactLabel: 'KeylinFZ',
+    instagramLabel: 'keylin_cosmetics'
   },
+
+  // Визитки сестёр. У каждой можно добавить phone, phoneLabel и email: пустые поля на визитке
+  // просто не показываются. Страница и репозиторий публичные, поэтому личные данные
+  // (e-mail, личный номер) владелицы добавляют сами и только если согласны их публиковать.
+  people: [
+    { id: 'zuhra', first: 'Zuhra', last: 'Ahmedova', phone: '+998990552249', phoneLabel: '+998 99 055-22-49', email: '' },
+    { id: 'fotima', first: 'Fotima', last: 'Akhmedova', phone: '', phoneLabel: '', email: '' }
+  ],
 
   // Адрес, куда уходят ответы гостей: Cloudflare Worker (папка worker/), он пересылает их в Telegram.
   // Если очистить строку, форма перейдёт в демо-режим: ответ никуда не отправляется.

@@ -1,4 +1,4 @@
-/* KeLin Cosmetics: приглашение. Язык, ворота с ключом, история, таймер, карта, форма, календарь. */
+/* KeLin Cosmetics: приглашение. Язык, заставка с ключом, история, визитки, таймер, карта, форма, календарь. */
 (function () {
   'use strict';
 
@@ -52,7 +52,8 @@
       timeAt: tr('hero.at') + ' ' + timeText(),
       when: tr('venue.when').replace('{weekday}', weekdayText()).replace('{day}', O.day).replace('{month}', monthText()).replace('{time}', timeText()),
       address: addressText(),
-      phone: (CFG.links || {}).phoneLabel || '',
+      phone: person().phoneLabel || '',
+      email: person().email || '',
       coordinates: (CFG.coords || {}).lat + '° N · ' + (CFG.coords || {}).lng + '° E'
     };
     $$('[data-bind]').forEach(function (el) {
@@ -183,15 +184,18 @@
     $('#rsvpErr').textContent = errKey ? tr(errKey) : '';
   }
 
-  /* ───────── ворота ───────── */
+  /* ───────── заставка ───────── */
   var gate = $('#gate');
   var main = $('#main');
   var keyBtn = $('#keyBtn');
+  var ring = $('#gateRing');
   var gateOn = root.classList.contains('is-locked');
   var opened = false;
   var ready = false;
   var gateFinished = false;
   var gateAnimations = [];
+  var IRIS_MS = 1150;      // сколько растёт круг света
+  var IRIS_DELAY = 300;    // пауза: ключ успевает сделать оборот
 
   function startPetals() {
     if (!window.KelinPetals) return;
@@ -206,8 +210,6 @@
   }
 
   function prepareGate() {
-    var doorArt = ((CFG.media || {}).campaign || {}).src;
-    if (doorArt) gate.style.setProperty('--door-art', 'url(' + JSON.stringify(doorArt) + ')');
     main.setAttribute('inert', '');
     main.setAttribute('aria-hidden', 'true');
     var started = false;
@@ -216,7 +218,8 @@
       started = true;
       if (reduceMotion) gate.classList.add('is-skip');
       gate.classList.add('is-play');
-      if (reduceMotion) markReady(); else setTimeout(markReady, 1050);
+      startPetals();                                  // лепестки плывут уже на заставке
+      if (reduceMotion) markReady(); else setTimeout(markReady, 1100);
     };
     var imgs = $$('img', gate);
     Promise.all(imgs.map(function (i) {
@@ -264,44 +267,72 @@
     startPetals();
   }
 
+  // золотые искры из ключа
+  function spawnSparks() {
+    var stage = $('#gateStage');
+    var colors = ['#FCBC0C', '#FFD65A', '#FFF3C4', '#F87C78'];
+    var made = [];
+    for (var i = 0; i < 16; i++) {
+      var s = document.createElement('i');
+      var ang = Math.random() * Math.PI * 2;
+      var dist = 50 + Math.random() * 130;
+      s.className = 'spark';
+      s.style.setProperty('--dx', (Math.cos(ang) * dist).toFixed(1) + 'px');
+      s.style.setProperty('--dy', (Math.sin(ang) * dist).toFixed(1) + 'px');
+      s.style.setProperty('--s', (3 + Math.random() * 5).toFixed(1) + 'px');
+      s.style.setProperty('--c', colors[i % colors.length]);
+      s.style.setProperty('--d', (Math.random() * 0.15).toFixed(2) + 's');
+      stage.appendChild(s);
+      made.push(s);
+    }
+    setTimeout(function () { made.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); }, 2000);
+  }
+
+  // Открытие: ключ делает оборот, от него расходится золотое кольцо, из ключа вылетают лепестки,
+  // а страница проявляется внутри растущего круга света.
   function openGate() {
     if (opened) return;
     opened = true;
     if (!ready) gate.classList.add('is-skip');
-    var doors = $$('.gate__door', gate);
-    var canAnimate = !reduceMotion && doors.every(function (door) { return !!door.animate; });
-    if (canAnimate) gate.classList.add('is-animated');
     gate.classList.add('is-play', 'is-opening');
-    body.classList.add('is-open');
-    startPetals();
-    if (reduceMotion) { setTimeout(finishGate, 180); return; }
-    var style = getComputedStyle(gate);
-    var duration = parseFloat(style.getPropertyValue('--door-duration')) || 1500;
-    var delay = parseFloat(style.getPropertyValue('--door-delay')) || 280;
-    if (canAnimate) {
-      gateAnimations = doors.map(function (door, index) {
-        return door.animate([
-          { transform: 'rotateY(0deg)' },
-          { transform: 'rotateY(' + (index === 0 ? -108 : 108) + 'deg)' }
-        ], { duration: duration, delay: delay + index * 40, easing: 'cubic-bezier(0.32, 0, 0.16, 1)', fill: 'both' });
-      });
-      Promise.all(gateAnimations.map(function (animation) {
-        return animation.finished.catch(function () { /* пропуск отменяет движение */ });
-      })).then(finishGate);
-    } else {
-      var remaining = doors.length;
-      doors.forEach(function (door) {
-        var complete = function (event) {
-          if (event.target !== door || event.propertyName !== 'transform') return;
-          door.removeEventListener('transitionend', complete);
-          remaining--;
-          if (!remaining) finishGate();
-        };
-        door.addEventListener('transitionend', complete);
-      });
+
+    var canIris = !reduceMotion && typeof gate.animate === 'function' && !!(window.CSS && CSS.registerProperty);
+    if (!canIris) {                                   // запасной путь: мягкое растворение
+      body.classList.add('is-open');
+      startPetals();
+      gate.classList.add('is-fade');
+      setTimeout(finishGate, reduceMotion ? 220 : 600);
+      return;
     }
-    // Страховка для браузера, не сообщившего об окончании анимации.
-    setTimeout(finishGate, duration + delay + 400);
+
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var box = $('#gateStage').getBoundingClientRect();
+    var keyx = parseFloat(getComputedStyle(root).getPropertyValue('--logo-keyx')) || 0.403;
+    var ix = box.left + box.width * keyx;             // центр цветка на ключе
+    var iy = box.top + box.height * 0.16;
+    var reach = Math.hypot(Math.max(ix, vw - ix), Math.max(iy, vh - iy)) * 1.12 + 60;
+    gate.style.setProperty('--ix', ix.toFixed(1) + 'px');
+    gate.style.setProperty('--iy', iy.toFixed(1) + 'px');
+    ring.style.setProperty('--ix', ix.toFixed(1) + 'px');
+    ring.style.setProperty('--iy', iy.toFixed(1) + 'px');
+
+    var timing = { duration: IRIS_MS, delay: IRIS_DELAY, easing: 'cubic-bezier(0.5, 0.05, 0.2, 1)', fill: 'both' };
+    var radius = reach.toFixed(0) + 'px';
+    gateAnimations = [
+      gate.animate([{ '--iris': '0px' }, { '--iris': radius }], timing),
+      ring.animate([{ '--iris': '0px' }, { '--iris': radius }], timing),
+      ring.animate([{ opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.78 }, { opacity: 0 }],
+        { duration: IRIS_MS, delay: IRIS_DELAY, easing: 'linear', fill: 'both' })
+    ];
+
+    setTimeout(function () {
+      spawnSparks();
+      if (window.KelinPetals) window.KelinPetals.burst(ix, iy, vw < 600 ? 30 : 46);
+    }, 240);
+    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, 650);
+
+    gateAnimations[0].finished.then(finishGate, function () { /* пропуск отменяет анимацию */ });
+    setTimeout(finishGate, IRIS_DELAY + IRIS_MS + 500);   // страховка для браузера, не сообщившего об окончании
   }
 
   /* ───────── галерея: свайп, кнопки и клавиатура ───────── */
@@ -447,8 +478,182 @@
     $('#mapYandex').href = 'https://yandex.uz/maps/?pt=' + c.lng + ',' + c.lat + '&z=17&l=map';
     $('#lnkIg').href = L.instagram || '#';
     $('#lnkTg').href = L.telegram || '#';
-    $('#lnkTel').href = 'tel:' + (L.phone || '');
     $('#venueMap').src = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&z=16&output=embed';
+  }
+
+  /* ───────── визитки ───────── */
+  var people = (CFG.people || []).filter(function (p) { return p && p.id; });
+  var currentId = people.length ? people[0].id : '';
+
+  function person(id) {
+    var want = id || currentId;
+    for (var i = 0; i < people.length; i++) if (people[i].id === want) return people[i];
+    var L = CFG.links || {};
+    return people[0] || { id: '', first: '', last: '', phone: L.phone || '', phoneLabel: L.phoneLabel || '', email: '' };
+  }
+  function fullName(p, upper) {
+    var s = upper ? (p.last + ' ' + p.first).toUpperCase() : p.first + ' ' + p.last;
+    return s.trim();
+  }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  function renderCards() {
+    var tabs = $('#cardTabs');
+    var stage = $('#cardStage');
+    if (!tabs || !stage || !people.length) return;
+    var L = CFG.links || {};
+    tabs.textContent = '';
+    stage.textContent = '';
+
+    people.forEach(function (p) {
+      var tab = el('button', null, p.first);
+      tab.type = 'button';
+      tab.id = 'tab-' + p.id;
+      tab.setAttribute('role', 'tab');
+      tab.setAttribute('aria-controls', 'card-' + p.id);
+      tab.setAttribute('data-person', p.id);
+      tabs.appendChild(tab);
+
+      var card = el('article', 'bizcard');
+      card.id = 'card-' + p.id;
+      card.setAttribute('role', 'tabpanel');
+      card.setAttribute('aria-labelledby', 'tab-' + p.id);
+      card.setAttribute('data-person', p.id);
+      var face = el('div', 'bizcard__face');
+
+      var mainPane = el('div', 'bizcard__main');
+      var head = el('div', 'bizcard__head');
+      head.appendChild(el('p', 'bizcard__name', fullName(p, true)));
+      var role = el('p', 'bizcard__role');
+      role.setAttribute('data-i18n', 'card.role');
+      head.appendChild(role);
+      mainPane.appendChild(head);
+
+      var rows = el('ul', 'bizcard__rows');
+      var addRow = function (icon, text, href) {
+        if (!text) return;
+        var li = el('li');
+        li.appendChild(svgIcon(icon));
+        var item = el(href ? 'a' : 'span', null, text);
+        if (href) item.href = href;
+        li.appendChild(item);
+        rows.appendChild(li);
+      };
+      addRow('phone', p.phoneLabel, p.phone ? 'tel:' + p.phone : '');
+      addRow('instagram', L.instagramLabel, L.instagram);
+      addRow('telegram', L.telegramContactLabel, L.telegramContact);
+      addRow('mail', p.email, p.email ? 'mailto:' + p.email : '');
+      mainPane.appendChild(rows);
+
+      var side = el('div', 'bizcard__side');
+      var logo = el('div', 'logo bizcard__logo');
+      logo.setAttribute('aria-hidden', 'true');
+      ['ke', 'lin', 'key', 'cosmetics'].forEach(function (name) {
+        var layer = new Image();
+        layer.src = 'assets/logo/' + name + '.webp';
+        layer.alt = '';
+        layer.decoding = 'async';
+        logo.appendChild(layer);
+      });
+      side.appendChild(logo);
+      var qr = el('div', 'bizcard__qr');
+      var code = new Image();
+      code.src = 'assets/qr/instagram.svg';
+      code.width = 120;
+      code.height = 120;
+      code.setAttribute('data-i18n-attr', 'alt:card.qr');
+      code.alt = '';
+      qr.appendChild(code);
+      side.appendChild(qr);
+
+      face.appendChild(mainPane);
+      face.appendChild(side);
+      card.appendChild(face);
+      stage.appendChild(card);
+    });
+
+    // переключение: вкладки, стрелки на клавиатуре и свайп по самой визитке
+    var ids = people.map(function (p) { return p.id; });
+    var cycle = function (dir) { selectPerson(ids[(ids.indexOf(currentId) + dir + ids.length) % ids.length]); };
+    tabs.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('[role="tab"]') : null;
+      if (t) selectPerson(t.getAttribute('data-person'));
+    });
+    tabs.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      cycle(e.key === 'ArrowRight' ? 1 : -1);
+      var active = $('[role="tab"][aria-selected="true"]', tabs);
+      if (active) active.focus();
+    });
+    var sx = 0, sy = 0, tracking = false;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      sx = e.clientX; sy = e.clientY; tracking = true;
+    });
+    stage.addEventListener('pointerup', function (e) {
+      if (!tracking) return;
+      tracking = false;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (ids.length > 1 && Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.4) cycle(dx < 0 ? 1 : -1);
+    });
+    stage.addEventListener('pointercancel', function () { tracking = false; });
+    selectPerson(currentId);
+  }
+
+  function selectPerson(id) {
+    currentId = id;
+    $$('#cardTabs [role="tab"]').forEach(function (t) {
+      var on = t.getAttribute('data-person') === id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    $$('#cardStage .bizcard').forEach(function (c) {
+      var on = c.getAttribute('data-person') === id;
+      c.classList.toggle('is-front', on);
+      c.classList.toggle('is-back', !on);
+      if (on) { c.removeAttribute('inert'); c.removeAttribute('aria-hidden'); } else { c.setAttribute('inert', ''); c.setAttribute('aria-hidden', 'true'); }
+    });
+    updateContactActions();
+  }
+
+  // кнопки под визиткой показывают данные выбранной сестры; чего нет, то скрыто
+  function updateContactActions() {
+    var p = person();
+    var tel = $('#lnkTel');
+    var mail = $('#lnkMail');
+    if (!tel || !mail) return;
+    tel.parentNode.hidden = !p.phone;
+    if (p.phone) tel.href = 'tel:' + p.phone;
+    mail.parentNode.hidden = !p.email;
+    if (p.email) mail.href = 'mailto:' + p.email;
+    bindText();
+  }
+
+  function vcardEsc(s) { return String(s).replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;'); }
+  function downloadVcard() {
+    var p = person();
+    var L = CFG.links || {};
+    var lines = ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + vcardEsc(p.last) + ';' + vcardEsc(p.first) + ';;;', 'FN:' + vcardEsc(fullName(p)), 'ORG:KeLin Cosmetics', 'TITLE:' + vcardEsc(tr('card.role'))];
+    if (p.phone) lines.push('TEL;TYPE=CELL:' + p.phone);
+    if (p.email) lines.push('EMAIL;TYPE=INTERNET:' + p.email);
+    if (L.instagram) lines.push('URL:' + L.instagram);
+    if (L.telegramContact) lines.push('URL:' + L.telegramContact);
+    lines.push('NOTE:' + vcardEsc(tr('foot.note')), 'END:VCARD');
+    var blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'KeLin-' + (p.first || 'contact') + '.vcf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
   }
 
   /* ───────── поделиться приглашением ───────── */
@@ -623,7 +828,9 @@
   function init() {
     lang = pickLang();
     buildSlots();
+    renderCards();
     applyLang(lang, false);
+    updateContactActions();
     setupLinks();
     setupAnchors();
     setupShare();
@@ -632,6 +839,7 @@
       b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang'), true); });
     });
     $('#calBtn').addEventListener('click', downloadIcs);
+    $('#saveContact').addEventListener('click', downloadVcard);
     if (CFG.sample) {
       $('#sampleFlag').hidden = false;
       $('#dateNote').hidden = false;

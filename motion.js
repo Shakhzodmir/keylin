@@ -23,10 +23,13 @@
     pending = 0;
     var total = Math.max(1, root.scrollHeight - innerHeight);
     root.style.setProperty('--reading-progress', clamp(scrollY / total, 0, 1).toFixed(4));
-    if (!hero || reduce) return;
+    if (reduce) return;
+    updateDrift();
+    if (!hero) return;
     var rect = hero.getBoundingClientRect();
     var visible = rect.bottom > 0 && rect.top < innerHeight;
-    var shouldRun = visible && body.classList.contains('is-open') && !document.hidden;
+    // лепестки летят над первыми экранами страницы, дальше не тратят заряд батареи
+    var shouldRun = scrollY < innerHeight * 2.4 && body.classList.contains('is-open') && !document.hidden;
     if (window.KelinPetals && shouldRun !== petalsOn) {
       petalsOn = shouldRun;
       window.KelinPetals[shouldRun ? 'start' : 'stop']();
@@ -38,6 +41,28 @@
     hero.style.setProperty('--pointer-x', pointer.x.toFixed(2) + 'px');
     hero.style.setProperty('--pointer-y', pointer.y.toFixed(2) + 'px');
     if (Math.abs(pointer.targetX - pointer.x) + Math.abs(pointer.targetY - pointer.y) > 0.1) schedule();
+  }
+
+  /* Картинки в рамках слегка плывут против прокрутки: рамка стоит, кадр внутри движется. */
+  var driftItems = [];
+  function setupDrift() {
+    if (reduce) return;
+    [['.shop__image > img', 38], ['.origin__image > img', 46], ['.sisters .portrait__window > img', 26], ['.gal .frame__in > img', 22]].forEach(function (group) {
+      document.querySelectorAll(group[0]).forEach(function (img) {
+        img.setAttribute('data-drift', '');
+        driftItems.push({ el: img, range: group[1] });
+      });
+    });
+  }
+  function updateDrift() {
+    for (var i = 0; i < driftItems.length; i++) {
+      var item = driftItems[i];
+      var rect = item.el.parentNode.getBoundingClientRect();
+      if (rect.bottom < -80 || rect.top > innerHeight + 80) continue;
+      // от -1 (рамка у нижнего края экрана) до +1 (у верхнего)
+      var progress = clamp(((rect.top + rect.height / 2) - innerHeight / 2) / (innerHeight / 2 + rect.height / 2), -1, 1);
+      item.el.style.transform = 'translate3d(0,' + (progress * item.range * -1).toFixed(1) + 'px,0) scale(1.16)';
+    }
   }
 
   function setupReveals() {
@@ -54,6 +79,7 @@
       ['.sisters__portrait', 'portrait', 120],
       ['.shop .sec-title', 'up', 0],
       ['.shop__art, .origin__content', 'up', 0],
+      ['.origin__image', 'reveal', 0],
       ['.cat', 'up', 60],
       ['.gal .sec-title', 'up', 0],
       ['.gal__item', 'up', 80],
@@ -72,7 +98,7 @@
 
   function setupTilt() {
     if (reduce || !finePointer) return;
-    document.querySelectorAll('.sisters .portrait__window, .gal .frame, .shop__image').forEach(function (frame) {
+    document.querySelectorAll('.sisters .portrait__window, .gal .frame, .shop__image, .bizcard__face').forEach(function (frame) {
       var bounds, frameId = 0, latest;
       frame.classList.add('is-tiltable');
       frame.addEventListener('pointerenter', function () { bounds = frame.getBoundingClientRect(); });
@@ -129,6 +155,7 @@
     gallery.addEventListener('dragstart', function (event) { event.preventDefault(); });
   }
 
+  setupDrift();
   setupReveals();
   setupTilt();
   setupGalleryDrag();

@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" type="image/webp" href="assets/logo/key.webp">
 <link rel="preload" as="font" type="font/ttf" href="assets/fonts/Jost.ttf" crossorigin>
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 <script>
 /* Ворота показываем один раз при входе. Прямая ссылка на раздел (#rsvp) или ?skip их пропускает.
    Страховка: если основной скрипт не загрузился, через 8 секунд ворота убираются сами. */
@@ -56,6 +56,8 @@
   <symbol id="i-hair" viewBox="0 0 24 24"><path d="M6 4c3 2.4 3 5.2 0 8s-3 5.6 0 8M12 4c3 2.4 3 5.2 0 8s-3 5.6 0 8M18 4c3 2.4 3 5.2 0 8s-3 5.6 0 8"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></symbol>
   <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="11" rx="1.5"/><path d="M3.5 13h17M12 9v11M12 9c-2.8 0-4.4-1-4.4-2.6S9 4.3 10.4 5 12 9 12 9zm0 0c2.8 0 4.4-1 4.4-2.6s-1.4-2.1-2.8-1.4S12 9 12 9z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7.5 8 5.8 8-5.8"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M18 7.5v6M15 10.5h6"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
@@ -73,38 +75,29 @@
 <canvas id="petals" aria-hidden="true"></canvas>
 <div class="reading-progress" aria-hidden="true"></div>
 
-<!-- Ворота: две створки с половинками логотипа, ключ посередине -->
+<!-- Заставка: ключ, золотой круг света и вылет лепестков -->
 <div class="gate" id="gate" role="dialog" aria-modal="true" tabindex="-1" data-i18n-attr="aria-label:gate.label" aria-label="KeLin Cosmetics taklifnomasi">
-  <div class="gate__veil" aria-hidden="true"></div>
-  <div class="gate__portal">
-  <div class="gate__frame" aria-hidden="true"></div>
+  <div class="gate__veil" aria-hidden="true">
+    <img class="gate__petals gate__petals--tl" src="assets/petals/corner-tl.webp" alt="" width="812" height="580" decoding="async">
+    <img class="gate__petals gate__petals--br" src="assets/petals/corner-br.webp" alt="" width="627" height="1260" decoding="async">
+  </div>
   <p class="gate__eyebrow" data-i18n="gate.eyebrow"></p>
-  <div class="gate__door gate__door--l">
-    <span class="gate__glass" aria-hidden="true"></span>
-    <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
-    <div class="logo" aria-hidden="true"><img class="logo__ke mask-x" src="assets/logo/ke.webp" alt="" decoding="async"></div>
-    <div class="gate__shade"></div>
-  </div>
-  <div class="gate__door gate__door--r">
-    <span class="gate__glass" aria-hidden="true"></span>
-    <span class="gate__handle" aria-hidden="true"></span><span class="gate__edge" aria-hidden="true"></span>
-    <div class="logo" aria-hidden="true"><img class="logo__lin mask-x" src="assets/logo/lin.webp" alt="" decoding="async"></div>
-    <div class="gate__shade"></div>
-  </div>
   <div class="gate__stage" id="gateStage">
     <div class="gate__bob">
-      <img class="logo__key mask-y" src="assets/logo/key.webp" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none">
+      <img class="logo__key mask-y" src="assets/logo/key.webp" alt="" decoding="async">
       <span class="gate__glow"></span>
     </div>
-    <img class="logo__cos mask-x" src="assets/logo/cosmetics.webp" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:none">
-    <button class="gate__keybtn" id="keyBtn" type="button" aria-describedby="gateHint" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, eshikni oching"></button>
-  </div>
-  <p class="gate__hint" id="gateHint" data-i18n="gate.hint">Kalitni bosing</p>
+    <img class="logo__ke mask-x" src="assets/logo/ke.webp" alt="" decoding="async">
+    <img class="logo__lin mask-x" src="assets/logo/lin.webp" alt="" decoding="async">
+    <img class="logo__cos mask-x" src="assets/logo/cosmetics.webp" alt="" decoding="async">
+    <button class="gate__keybtn" id="keyBtn" type="button" aria-describedby="gateHint" data-i18n-attr="aria-label:gate.key" aria-label="Kalitni burab, taklifnomani oching"></button>
+    <p class="gate__hint" id="gateHint" data-i18n="gate.hint">Kalitni bosing</p>
   </div>
   <button class="btn btn--cocoa gate__open" id="gateOpen" type="button"><span data-i18n="gate.open"></span><span class="btn-arrow" aria-hidden="true"><svg class="ic"><use href="#i-arrow-up"/></svg></span></button>
   <button class="gate__skip" id="gateSkip" type="button" data-i18n="gate.skip"></button>
   <p class="gate__signature" data-i18n="gate.signature"></p>
 </div>
+<div class="gate__ring" id="gateRing" aria-hidden="true"></div>
 
 <main id="main">
 
@@ -144,6 +137,13 @@
     <a class="invitation-details__item invitation-details__place" href="#venue"><span class="eyebrow" data-i18n="details.place"></span><span data-i18n="brand.location"></span><small data-i18n="details.route"></small></a>
     <button class="btn btn--ghost" id="calBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg><span data-i18n="hero.cal"></span></button>
   </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span class="marquee__group"><span data-i18n="marquee.1"></span><i></i><span data-i18n="marquee.2"></span><i></i><span data-i18n="marquee.3"></span><i></i><span data-i18n="marquee.4"></span><i></i><span data-i18n="marquee.5"></span><i></i><span data-i18n="marquee.6"></span><i></i></span>
+      <span class="marquee__group"><span data-i18n="marquee.1"></span><i></i><span data-i18n="marquee.2"></span><i></i><span data-i18n="marquee.3"></span><i></i><span data-i18n="marquee.4"></span><i></i><span data-i18n="marquee.5"></span><i></i><span data-i18n="marquee.6"></span><i></i></span>
+    </div>
+  </div>
 
   <!-- Приветствие -->
   <section class="sec sec--center hello" id="hello">
@@ -329,14 +329,20 @@
     </div>
   </section>
 
-  <!-- Контакты -->
-  <section class="sec sec--center contact" id="contact" aria-labelledby="contact-title" style="padding-top:12px">
+  <!-- Визитки -->
+  <section class="sec sec--center contact" id="contact" aria-labelledby="contact-title">
     <div class="sec__in">
+      <p class="eyebrow" data-i18n="card.eyebrow"></p>
       <h2 class="sec-title" id="contact-title" data-i18n="contact.title">Biz bilan bogʻlaning</h2>
+      <p class="sec-lead" data-i18n="card.lead"></p>
+      <div class="cardtabs" id="cardTabs" role="tablist" data-i18n-attr="aria-label:card.tabs" aria-label="Vizitka egasi"></div>
+      <div class="cardstage" id="cardStage"></div>
       <ul class="contact__list">
+        <li><a class="btn btn--ghost" id="lnkTel"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span class="txt"><span data-i18n="contact.call">Qoʻngʻiroq qilish</span><small data-bind="phone"></small></span></a></li>
+        <li><a class="btn btn--ghost" id="lnkMail"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg><span class="txt"><span data-i18n="contact.mail">E-mail</span><small data-bind="email"></small></span></a></li>
         <li><a class="btn btn--ghost" id="lnkIg" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-instagram"/></svg><span class="txt"><span data-i18n="contact.ig">Instagram</span><small>@keylin_cosmetics</small></span></a></li>
         <li><a class="btn btn--ghost" id="lnkTg" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-telegram"/></svg><span class="txt"><span data-i18n="contact.tg">Telegram kanal</span><small>@keylincosmetics</small></span></a></li>
-        <li><a class="btn btn--ghost" id="lnkTel"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span class="txt"><span data-i18n="contact.call">Qoʻngʻiroq qilish</span><small data-bind="phone"></small></span></a></li>
+        <li class="contact__save"><button class="btn btn--cocoa" id="saveContact" type="button"><svg class="ic" aria-hidden="true"><use href="#i-user-plus"/></svg><span data-i18n="card.save">Kontaktni saqlash</span></button></li>
       </ul>
     </div>
   </section>
@@ -355,10 +361,10 @@
 <a class="btn btn--gold fab" id="fab" href="#rsvp" data-i18n="hero.rsvp">Kelaman</a>
 
 <noscript><style>.hero [data-in]{opacity:1!important;transform:none!important}</style></noscript>
-<script src="config.js?v=6"></script>
-<script src="i18n.js?v=6"></script>
-<script src="petals.js?v=6"></script>
-<script src="app.js?v=6"></script>
-<script src="motion.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="i18n.js?v=7"></script>
+<script src="petals.js?v=7"></script>
+<script src="app.js?v=7"></script>
+<script src="motion.js?v=7"></script>
 </body>
 </html>
