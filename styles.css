@@ -171,46 +171,17 @@ main { position: relative; z-index: 1; overflow-x: clip; }
 .eyebrow { font-size: 0.6875rem; font-weight: 500; line-height: 1.5; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
 .little-star { width: 22px; height: 22px; color: var(--coral-ink); vertical-align: middle; margin-right: 12px; }
 
-/* ───────── заставка: ключ, золотой круг света и лепестки ───────── */
-/* Страница открывается внутри круга, который растёт от ключа: маска гаснет по радиусу --iris. */
-@property --iris { syntax: '<length>'; inherits: false; initial-value: 0px; }
-
+/* ───────── заставка: ключ отпирает, створки с половинками логотипа распахиваются ───────── */
 .gate {
-  --logo-w: min(78vw, 440px, calc(42svh * var(--logo-ar)));
-  --ix: 50%;
-  --iy: 40%;
+  --logo-w: min(84vw, 480px, calc(46svh * var(--logo-ar)));
+  --seam: calc(50vw + (var(--logo-keyx) - 0.5) * var(--logo-w));   /* шов между створками проходит по стержню ключа */
   position: fixed; inset: 0; z-index: 200; overflow: hidden; cursor: pointer; touch-action: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-mask-image: radial-gradient(circle at var(--ix) var(--iy), transparent var(--iris), #000 calc(var(--iris) * 1.08 + 1px));
-  mask-image: radial-gradient(circle at var(--ix) var(--iy), transparent var(--iris), #000 calc(var(--iris) * 1.08 + 1px));
+  perspective: 1700px; perspective-origin: 50% 46%; -webkit-tap-highlight-color: transparent;
 }
 html:not(.js) .gate { display: none; }
 .gate:focus { outline: none; }
-/* запасной путь без круга: браузер не умеет анимировать маску или включено уменьшенное движение */
-.gate.is-fade { opacity: 0; transition: opacity 520ms ease-out; -webkit-mask-image: none; mask-image: none; }
-
-.gate__veil {
-  position: absolute; inset: 0; overflow: hidden;
-  background: radial-gradient(72% 56% at 50% 36%, #FFF7F2 0%, #FCE5E0 58%, #F6D3CD 100%);
-}
-.gate__veil::after {            /* бумажная фактура */
-  content: ""; position: absolute; inset: 0; opacity: 0.32; mix-blend-mode: multiply; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .62  0 0 0 0 .36  0 0 0 0 .32  0 0 0 .34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-.gate__petals { position: absolute; max-width: none; height: auto; pointer-events: none; user-select: none; }
-.gate__petals--tl {
-  top: 0; left: 0; width: min(88vw, 640px); transform-origin: 0 0;
-  -webkit-mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 52%, transparent 100%);
-  mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 52%, transparent 100%);
-  animation: petalsDrift 14s ease-in-out infinite alternate;
-}
-.gate__petals--br {
-  right: 0; bottom: 0; width: min(36vw, 260px); transform-origin: 100% 100%;
-  -webkit-mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 48%, transparent 100%);
-  mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 48%, transparent 100%);
-  animation: petalsDrift 17s ease-in-out infinite alternate-reverse;
-}
-@keyframes petalsDrift { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(-10px, 8px, 0) scale(1.045); } }
+/* запасной путь: браузер без WAAPI или включено «уменьшить движение», просто растворяемся */
+.gate.is-fade { opacity: 0; transition: opacity 520ms ease-out; }
 
 .logo { position: relative; width: var(--logo-w); aspect-ratio: var(--logo-ar); pointer-events: none; }
 .logo img {
@@ -218,11 +189,46 @@ html:not(.js) .gate { display: none; }
   user-select: none; -webkit-user-drag: none;
 }
 
-.gate__stage { position: absolute; left: 50%; top: 40%; width: var(--logo-w); aspect-ratio: var(--logo-ar); transform: translate(-50%, -50%); }
-.gate__stage > img, .gate__bob, .gate__bob > img {
-  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block;
-  user-select: none; -webkit-user-drag: none; pointer-events: none;
+.gate__door {
+  position: absolute; top: 0; bottom: 0; overflow: visible; backface-visibility: hidden; will-change: transform;
+  background: radial-gradient(120% 90% at 50% 38%, #FFF0EE 0%, var(--petal) 52%, #F9D8D5 100%);
+  transition: transform 1150ms var(--ease-door) 260ms;
 }
+.gate__door--l { left: 0; width: var(--seam); transform-origin: 0 50%; box-shadow: inset -22px 0 28px -22px rgba(120, 60, 40, 0.22); }
+.gate__door--r { left: var(--seam); right: 0; transform-origin: 100% 50%; box-shadow: inset 22px 0 28px -22px rgba(120, 60, 40, 0.22); }
+
+.gate__door::before {          /* бумажная фактура */
+  content: ""; position: absolute; inset: 0; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .62  0 0 0 0 .36  0 0 0 0 .32  0 0 0 .34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.gate__door::after {           /* золотая рамка филёнки */
+  content: ""; position: absolute; inset: 14px; border: 1px solid rgba(252, 188, 12, 0.6); border-radius: 4px; pointer-events: none;
+}
+.gate__decor { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.gate__petals { position: absolute; max-width: none; height: auto; user-select: none; }
+.gate__petals--tl {
+  top: 0; left: 0; width: min(100%, 460px);
+  -webkit-mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 52%, transparent 100%);
+}
+.gate__petals--br {
+  right: 0; bottom: 0; width: min(78%, 240px);
+  -webkit-mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 48%, transparent 100%);
+  mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 48%, transparent 100%);
+}
+.gate__shade {
+  position: absolute; inset: 0; background: linear-gradient(90deg, rgba(58, 30, 18, 0.5), rgba(58, 30, 18, 0.2));
+  opacity: 0; transition: opacity 1000ms ease-out 260ms; pointer-events: none;
+}
+
+/* общие позиции логотипа: по центру, чуть выше середины */
+.gate__door .logo,
+.gate__stage { position: absolute; top: 44%; margin-top: calc(var(--logo-w) / var(--logo-ar) / -2); }
+.gate__door--l .logo { left: calc(50vw - var(--logo-w) / 2); }
+.gate__door--r .logo { left: calc(50vw - var(--logo-w) / 2 - var(--seam)); }
+.gate__stage { left: calc(50vw - var(--logo-w) / 2); width: var(--logo-w); aspect-ratio: var(--logo-ar); }
+.gate__stage > .gate__bob, .gate__stage > .logo__cos { position: absolute; inset: 0; }
+.gate__bob > img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block; }
 
 /* кисть: проявление слоя, мягкий край */
 .mask-y, .mask-x { -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
@@ -241,17 +247,17 @@ html:not(.js) .gate { display: none; }
 @keyframes sweepY { from { -webkit-mask-position: 0 100%; mask-position: 0 100%; } to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
 @keyframes sweepX { from { -webkit-mask-position: 100% 0; mask-position: 100% 0; } to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
 
-.gate.is-play .logo__key { animation: sweepY 700ms var(--ease-out) 0ms both; }
-.gate.is-play .logo__ke { animation: sweepX 560ms var(--ease-out) 260ms both; }
-.gate.is-play .logo__lin { animation: sweepX 560ms var(--ease-out) 420ms both; }
-.gate.is-play .logo__cos { animation: sweepX 460ms var(--ease-out) 700ms both; }
+.gate.is-play .logo__key { animation: sweepY 850ms var(--ease-out) 100ms both; }
+.gate.is-play .logo__ke { animation: sweepX 650ms var(--ease-out) 600ms both; }
+.gate.is-play .logo__lin { animation: sweepX 650ms var(--ease-out) 800ms both; }
+.gate.is-play .logo__cos { animation: sweepX 500ms var(--ease-out) 1100ms both; }
 .gate.is-skip .logo__key, .gate.is-skip .logo__ke, .gate.is-skip .logo__lin, .gate.is-skip .logo__cos {
   animation: none; -webkit-mask-position: 0 0; mask-position: 0 0;
 }
 
 .gate__keybtn {               /* невидимая кнопка по размерам ключа: клавиатура и скринридер */
-  position: absolute; z-index: 3; pointer-events: auto; padding: 0; margin: 0; border: 0; background: transparent; cursor: pointer;
-  left: 29%; top: 2%; width: 22%; height: 82%; border-radius: 14px;
+  position: absolute; pointer-events: auto; padding: 0; margin: 0; border: 0; background: transparent; cursor: pointer;
+  left: 29%; top: 2%; width: 22%; height: 82%; border-radius: 14px; z-index: 3;
 }
 .gate__keybtn:focus-visible { outline: 2px solid var(--coral-ink); outline-offset: 6px; }
 
@@ -274,41 +280,36 @@ html:not(.js) .gate { display: none; }
 }
 .gate.is-ready .gate__hint { opacity: 1; transform: none; }
 .gate__eyebrow { position: absolute; z-index: 2; top: calc(max(23px, env(safe-area-inset-top)) + 66px); left: 24px; right: 24px; text-align: center; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
-.gate__open { position: absolute; z-index: 4; bottom: 48px; left: 50%; transform: translateX(-50%); gap: 28px; white-space: nowrap; }
+.gate__open { position: absolute; z-index: 4; bottom: max(48px, calc(env(safe-area-inset-bottom) + 36px)); left: 50%; transform: translateX(-50%); gap: 28px; white-space: nowrap; }
 .gate__open:active { transform: translateX(-50%) scale(0.97); }
 .gate__signature { position: absolute; z-index: 2; bottom: 14px; left: 20px; right: 20px; text-align: center; font-size: 0.8125rem; }
 .gate__skip { position: absolute; z-index: 6; top: max(23px, env(safe-area-inset-top)); left: var(--gutter); min-height: 44px; border: 0; padding: 0 10px; background: transparent; color: var(--ink); font-size: 0.8125rem; cursor: pointer; pointer-events: auto; text-decoration: underline; text-decoration-color: rgba(90, 45, 20, 0.35); text-underline-offset: 5px; }
 .gate__skip:hover { text-decoration-color: currentColor; }
 
-/* открытие: ключ делает оборот, всё лишнее гаснет, от ключа расходится кольцо света */
+/* ключ делает оборот вокруг стержня */
 .gate .logo__key { transform-origin: calc(var(--logo-keyx) * 100%) 50%; }
 @keyframes keyTurn {
-  0% { transform: perspective(900px) rotateY(0deg) scale(1); }
-  100% { transform: perspective(900px) rotateY(360deg) scale(1.07); }
+  0% { transform: perspective(1000px) rotateY(0) scale(1); }
+  100% { transform: perspective(1000px) rotateY(360deg) scale(1.06); }
 }
 .gate.is-opening .logo__key {
   -webkit-mask-position: 0 0; mask-position: 0 0;
-  animation: keyTurn 640ms var(--ease-in-out) both;
+  animation: keyTurn 520ms var(--ease-in-out) both;
+}
+
+/* ключ и «COSMETICS» гаснут, когда створки уже пошли, и до того, как покажется первый экран */
+.gate.is-opening .gate__stage {
+  opacity: 0; transform: scale(1.06);
+  transition: opacity 280ms ease-out 480ms, transform 520ms var(--ease-out) 440ms;
 }
 .gate.is-opening .mask-x { animation: none; -webkit-mask-position: 0 0; mask-position: 0 0; }
 .gate.is-opening .gate__eyebrow, .gate.is-opening .gate__open, .gate.is-opening .gate__signature, .gate.is-opening .gate__hint, .gate.is-opening .gate__skip {
   opacity: 0; transition: opacity 220ms ease;
 }
+.gate.is-opening .gate__door--l { transform: rotateY(104deg); }
+.gate.is-opening .gate__door--r { transform: rotateY(-104deg); }
+.gate.is-opening .gate__shade { opacity: 1; }
 .gate.is-opening { pointer-events: none; }
-
-/* кольцо света на краю растущего круга: толщина постоянная, радиус берётся из --iris */
-.gate__ring {
-  --ix: 50%; --iy: 40%;
-  position: fixed; inset: 0; z-index: 205; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle at var(--ix) var(--iy),
-    transparent calc(var(--iris) * 1.04 - 30px),
-    rgba(255, 214, 90, 0.26) calc(var(--iris) * 1.04 - 1px),
-    rgba(252, 188, 12, 0.95) calc(var(--iris) * 1.04),
-    rgba(252, 188, 12, 0.95) calc(var(--iris) * 1.04 + 2px),
-    rgba(255, 214, 90, 0.2) calc(var(--iris) * 1.04 + 5px),
-    transparent calc(var(--iris) * 1.04 + 38px));
-}
-html:not(.is-locked) .gate__ring { display: none; }
 
 .spark {
   position: absolute; left: calc(var(--logo-keyx) * 100%); top: 16%; z-index: 4; pointer-events: none;
@@ -505,43 +506,73 @@ html:not(.is-locked) .gate__ring { display: none; }
 }
 
 /* ───────── наш магазин: вывеска, видео, интерьер ───────── */
-.store { background: var(--paper); padding-bottom: 96px; }
+.store {
+  --r: 22px;
+  padding-bottom: 96px;
+  background:
+    radial-gradient(60% 40% at 92% 6%, rgba(248, 124, 120, 0.08), transparent 70%),
+    radial-gradient(50% 38% at 4% 96%, rgba(252, 188, 12, 0.09), transparent 70%),
+    linear-gradient(180deg, var(--paper), #FBEBE6 55%, var(--paper));
+}
 .store__in { max-width: 1180px; }
 .store__head { max-width: 38rem; }
 .store__head .sec-title { text-wrap: balance; }
-.store__grid { margin-top: 48px; display: grid; gap: 40px; }
+.store__grid { margin-top: 48px; display: grid; gap: 44px; }
+
+.store__fig { position: relative; margin: 0; min-width: 0; border-radius: var(--r); box-shadow: 0 34px 56px -36px rgba(92, 45, 28, 0.55), 0 2px 6px rgba(92, 45, 28, 0.08); }
+.store__img { position: relative; overflow: hidden; background: #F2D5C8; aspect-ratio: 4 / 3; border-radius: var(--r); }
+.store__img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
+/* тонкая светлая рамка-паспарту внутри снимка */
+.store__img::after {
+  content: ''; position: absolute; z-index: 1; inset: 10px; border: 1px solid rgba(255, 248, 245, 0.6);
+  border-radius: calc(var(--r) - 9px); pointer-events: none;
+}
+/* подпись лежит на снимке, на мягкой тёмной подложке */
+.store__fig figcaption {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 46px 22px 18px;
+  border-radius: 0 0 var(--r) var(--r); pointer-events: none;
+  background: linear-gradient(to top, rgba(43, 22, 13, 0.62), rgba(43, 22, 13, 0.26) 58%, rgba(43, 22, 13, 0));
+  color: #FFF3EA; font-size: 0.9375rem; font-weight: 300; line-height: 1.35; letter-spacing: 0.02em; text-shadow: 0 1px 10px rgba(43, 22, 13, 0.35);
+}
+.store__fig figcaption::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 10px 2px 0; background: var(--gold-soft); transform: rotate(45deg);
+}
 
 /* вывеска: арочная рамка, поверх неё «живое» видео под лёгким наклоном */
-.store__sign { position: relative; width: 82%; margin-bottom: 14%; }
-.store__fig { position: relative; margin: 0; min-width: 0; }
-.store__img { position: relative; overflow: hidden; background: #F2D5C8; aspect-ratio: 4 / 3; border-radius: 2px; }
-.store__img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
-.store__fig figcaption { margin-top: 12px; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-soft); }
+.store__sign { position: relative; width: 82%; margin-bottom: 16%; }
+.store__fig--sign { border-radius: 50% 50% var(--r) var(--r) / 30% 30% var(--r) var(--r); }
 .store__fig--sign .store__img {
-  aspect-ratio: 3 / 4; border-radius: 50% 50% 2px 2px / 30% 30% 2px 2px;
-  outline: 1px solid rgba(205, 165, 130, 0.7); outline-offset: 7px;
+  aspect-ratio: 3 / 4; border-radius: 50% 50% var(--r) var(--r) / 30% 30% var(--r) var(--r);
+  outline: 1px solid rgba(205, 165, 130, 0.75); outline-offset: 8px;
 }
+.store__fig--sign .store__img::after { border-radius: 50% 50% 14px 14px / 30% 30% 14px 14px; border-color: rgba(252, 188, 12, 0.75); }
 .store__fig--sign .store__img > img { object-position: 50% 42%; }
+.store__fig--sign figcaption { border-radius: 0 0 var(--r) var(--r); padding-right: 48%; }
 
 .store__clip {
-  position: absolute; z-index: 2; right: -19%; bottom: -13%; width: 42%; aspect-ratio: 464 / 848; rotate: 3.2deg;
-  border-radius: 16px; overflow: hidden; background: #E9C9BE;
+  position: absolute; z-index: 3; right: -19%; bottom: -13%; width: 42%; aspect-ratio: 464 / 848; rotate: 3.2deg;
+  border-radius: 18px; overflow: hidden; background: #E9C9BE;
   border: 3px solid var(--paper); outline: 1.5px solid var(--gold);
-  box-shadow: 0 26px 44px -22px rgba(58, 30, 18, 0.55);
+  box-shadow: 0 30px 50px -22px rgba(58, 30, 18, 0.6);
 }
 .store__clip video, .store__clip > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .store__clip .slot-play span { width: 44px; height: 44px; }
 .store__clip .slot-play .ic { width: 18px; height: 18px; }
 
-.store__rooms { display: grid; gap: 14px; align-content: start; }
-.store__pair { display: grid; gap: 14px; }
+.store__rooms { display: grid; gap: 18px; align-content: start; }
+.store__pair { display: grid; gap: 18px; }
+.store__fig--wide .store__img { border-radius: 110px var(--r) var(--r) var(--r); }
+.store__fig--wide .store__img::after { border-radius: 102px 14px 14px 14px; }
+.store__fig--wide { border-radius: 110px var(--r) var(--r) var(--r); }
 
-/* «для гостей»: золотая метка на снимке с диванчиками */
+/* «для гостей»: стеклянная метка с золотым ромбом */
 .store__tag {
-  position: absolute; z-index: 2; left: 12px; top: 12px; padding: 6px 14px; border-radius: 999px;
-  background: var(--gold); color: var(--cocoa); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em;
-  box-shadow: 0 8px 18px -10px rgba(122, 86, 0, 0.7);
+  position: absolute; z-index: 3; left: 18px; top: 18px; display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px 8px 13px; border-radius: 999px;
+  background: rgba(255, 248, 245, 0.82); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.7); color: var(--cocoa); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em;
+  box-shadow: 0 10px 22px -12px rgba(58, 30, 18, 0.55);
 }
+.store__tag::before { content: ''; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex: none; }
 
 @media (min-width: 600px) {
   .store__pair { grid-template-columns: 1fr 1fr; }
@@ -553,8 +584,7 @@ html:not(.is-locked) .gate__ring { display: none; }
   .store__grid { grid-template-columns: 5fr 7fr; gap: clamp(36px, 5vw, 72px); align-items: start; margin-top: 64px; }
   .store__sign { width: 76%; margin: 0; position: sticky; top: 104px; }   /* вывеска едет рядом, пока справа листаются залы */
   .store__clip { right: -28%; bottom: -10%; width: 44%; }
-  .store__rooms { gap: 18px; }
-  .store__pair { gap: 18px; }
+  .store__rooms, .store__pair { gap: 22px; }
 }
 
 /* ───────── что привезли ───────── */
@@ -932,11 +962,10 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
 /* ───────── малые экраны по высоте (телефон в ландшафте) ───────── */
 @media (max-height: 520px) and (orientation: landscape) {
   .hero { padding-block: 64px; }
-  .gate { --logo-w: min(calc(46svh * var(--logo-ar)), 300px); }
-  .gate__stage { top: 44%; }
+  .gate { --logo-w: min(calc(44svh * var(--logo-ar)), 300px); }
+  .gate__stage, .gate__door .logo { top: 44%; }
   .gate__eyebrow, .gate__signature, .gate__hint { display: none; }
   .gate__open { bottom: 16px; min-height: 44px; }
-}
 }
 
 /* ───────── уменьшенное движение ───────── */
@@ -1003,9 +1032,9 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
   .store__clip { rotate: none; }
   .store__img > img { transform: none !important; }
   .gate.is-opening .logo__key { animation: none; }
-  .gate .gate__bob, .gate .gate__glow, .gate__petals { animation: none !important; }
-  .gate__ring { display: none; }
+  .gate .gate__bob, .gate .gate__glow { animation: none !important; }
   .gate.is-fade { transition-duration: 160ms; }
+  .gate__door { transition: none; }
   .marquee__track { animation: none; }
   .btn--gold::after { animation: none; display: none; }
   .js .hero__title > span, .js .hero__title > em { clip-path: none; transform: none; }

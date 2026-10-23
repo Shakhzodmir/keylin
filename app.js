@@ -208,14 +208,10 @@
   var gate = $('#gate');
   var main = $('#main');
   var keyBtn = $('#keyBtn');
-  var ring = $('#gateRing');
   var gateOn = root.classList.contains('is-locked');
   var opened = false;
   var ready = false;
   var gateFinished = false;
-  var gateAnimations = [];
-  var IRIS_MS = 1150;      // сколько растёт круг света
-  var IRIS_DELAY = 300;    // пауза: ключ успевает сделать оборот
 
   function startPetals() {
     if (!window.KelinPetals) return;
@@ -239,7 +235,7 @@
       if (reduceMotion) gate.classList.add('is-skip');
       gate.classList.add('is-play');
       startPetals();                                  // лепестки плывут уже на заставке
-      if (reduceMotion) markReady(); else setTimeout(markReady, 1100);
+      if (reduceMotion) markReady(); else setTimeout(markReady, 1700);
     };
     var imgs = $$('img', gate);
     Promise.all(imgs.map(function (i) {
@@ -283,7 +279,6 @@
     opened = true;
     body.classList.add('is-open');
     finishGate();
-    gateAnimations.forEach(function (animation) { animation.cancel(); });
     startPetals();
   }
 
@@ -308,51 +303,29 @@
     setTimeout(function () { made.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); }, 2000);
   }
 
-  // Открытие: ключ делает оборот, от него расходится золотое кольцо, из ключа вылетают лепестки,
-  // а страница проявляется внутри растущего круга света.
+  // Открытие: ключ делает оборот, искры и лепестки вылетают из ключа, створки распахиваются.
   function openGate() {
     if (opened) return;
     opened = true;
     if (!ready) gate.classList.add('is-skip');
     gate.classList.add('is-play', 'is-opening');
 
-    var canIris = !reduceMotion && typeof gate.animate === 'function' && !!(window.CSS && CSS.registerProperty);
-    if (!canIris) {                                   // запасной путь: мягкое растворение
+    if (reduceMotion) {                               // без движения: мягко растворяемся
       body.classList.add('is-open');
       startPetals();
       gate.classList.add('is-fade');
-      setTimeout(finishGate, reduceMotion ? 220 : 600);
+      setTimeout(finishGate, 260);
       return;
     }
-
-    var vw = window.innerWidth, vh = window.innerHeight;
+    var vw = window.innerWidth;
     var box = $('#gateStage').getBoundingClientRect();
     var keyx = parseFloat(getComputedStyle(root).getPropertyValue('--logo-keyx')) || 0.403;
-    var ix = box.left + box.width * keyx;             // центр цветка на ключе
+    var ix = box.left + box.width * keyx;             // цветок на ключе
     var iy = box.top + box.height * 0.16;
-    var reach = Math.hypot(Math.max(ix, vw - ix), Math.max(iy, vh - iy)) * 1.12 + 60;
-    gate.style.setProperty('--ix', ix.toFixed(1) + 'px');
-    gate.style.setProperty('--iy', iy.toFixed(1) + 'px');
-    ring.style.setProperty('--ix', ix.toFixed(1) + 'px');
-    ring.style.setProperty('--iy', iy.toFixed(1) + 'px');
-
-    var timing = { duration: IRIS_MS, delay: IRIS_DELAY, easing: 'cubic-bezier(0.5, 0.05, 0.2, 1)', fill: 'both' };
-    var radius = reach.toFixed(0) + 'px';
-    gateAnimations = [
-      gate.animate([{ '--iris': '0px' }, { '--iris': radius }], timing),
-      ring.animate([{ '--iris': '0px' }, { '--iris': radius }], timing),
-      ring.animate([{ opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.78 }, { opacity: 0 }],
-        { duration: IRIS_MS, delay: IRIS_DELAY, easing: 'linear', fill: 'both' })
-    ];
-
-    setTimeout(function () {
-      spawnSparks();
-      if (window.KelinPetals) window.KelinPetals.burst(ix, iy, vw < 600 ? 30 : 46);
-    }, 240);
-    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, 650);
-
-    gateAnimations[0].finished.then(finishGate, function () { /* пропуск отменяет анимацию */ });
-    setTimeout(finishGate, IRIS_DELAY + IRIS_MS + 500);   // страховка для браузера, не сообщившего об окончании
+    spawnSparks();
+    setTimeout(function () { if (window.KelinPetals) window.KelinPetals.burst(ix, iy, vw < 600 ? 28 : 44); }, 260);
+    setTimeout(function () { body.classList.add('is-open'); startPetals(); }, 640);
+    setTimeout(finishGate, 1900);                     // створки заканчивают движение примерно к 1.5 с
   }
 
   /* ───────── галерея: свайп, кнопки и клавиатура ───────── */
