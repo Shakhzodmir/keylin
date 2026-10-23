@@ -192,7 +192,7 @@ html:not(.js) .gate { display: none; }
 .gate__door {
   position: absolute; top: 0; bottom: 0; overflow: visible; backface-visibility: hidden; will-change: transform;
   background: radial-gradient(120% 90% at 50% 38%, #FFF0EE 0%, var(--petal) 52%, #F9D8D5 100%);
-  transition: transform 1150ms var(--ease-door) 260ms;
+  transition: transform 1250ms var(--ease-door) 380ms;
 }
 .gate__door--l { left: 0; width: var(--seam); transform-origin: 0 50%; box-shadow: inset -22px 0 28px -22px rgba(120, 60, 40, 0.22); }
 .gate__door--r { left: var(--seam); right: 0; transform-origin: 100% 50%; box-shadow: inset 22px 0 28px -22px rgba(120, 60, 40, 0.22); }
@@ -218,7 +218,7 @@ html:not(.js) .gate { display: none; }
 }
 .gate__shade {
   position: absolute; inset: 0; background: linear-gradient(90deg, rgba(58, 30, 18, 0.5), rgba(58, 30, 18, 0.2));
-  opacity: 0; transition: opacity 1000ms ease-out 260ms; pointer-events: none;
+  opacity: 0; transition: opacity 1000ms ease-out 380ms; pointer-events: none;
 }
 
 /* общие позиции логотипа: по центру, чуть выше середины */
@@ -321,6 +321,24 @@ html:not(.js) .gate { display: none; }
   0% { opacity: 1; transform: translate(0, 0) scale(1); }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.2); }
 }
+
+/* золотое кольцо от ключа и тёплый свет в щели между створками */
+.gate__light {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background:
+    radial-gradient(34% 62% at var(--seam) 46%, rgba(255, 233, 160, 0.95), rgba(255, 214, 110, 0.5) 42%, rgba(255, 244, 220, 0) 78%),
+    linear-gradient(90deg, rgba(255, 244, 220, 0) calc(var(--seam) - 14vw), rgba(255, 238, 190, 0.7) var(--seam), rgba(255, 244, 220, 0) calc(var(--seam) + 14vw));
+}
+.gate.is-opening .gate__light { animation: gateLight 1700ms ease-out 260ms both; }
+@keyframes gateLight { 0% { opacity: 0; } 22% { opacity: 1; } 55% { opacity: 0.85; } 100% { opacity: 0; } }
+.gate__ripple {
+  position: absolute; left: calc(var(--logo-keyx) * 100%); top: 16%; width: calc(var(--logo-w) * 0.2); height: auto; aspect-ratio: 1;
+  margin: calc(var(--logo-w) * -0.1) 0 0 calc(var(--logo-w) * -0.1); border: 2px solid var(--gold); border-radius: 50%;
+  opacity: 0; pointer-events: none; transform: scale(0.4);
+}
+.gate.is-opening .gate__ripple { animation: gateRipple 900ms var(--ease-out) 120ms both; }
+.gate.is-opening .gate__ripple--2 { animation-delay: 300ms; border-color: rgba(248, 124, 120, 0.8); }
+@keyframes gateRipple { 0% { opacity: 0.95; transform: scale(0.4); } 100% { opacity: 0; transform: scale(4.2); } }
 
 /* пока открыта заставка, лепестки летят поверх неё */
 .is-locked #petals { z-index: 201; }
@@ -585,6 +603,26 @@ html:not(.js) .gate { display: none; }
   .store__sign { width: 76%; margin: 0; position: sticky; top: 104px; }   /* вывеска едет рядом, пока справа листаются залы */
   .store__clip { right: -28%; bottom: -10%; width: 44%; }
   .store__rooms, .store__pair { gap: 22px; }
+}
+
+/* фасад: на телефоне идёт первым кадром раздела, на компьютере стоит справа от заголовка */
+.store__fig--facade { margin-top: 40px; border-radius: 28px; }
+.store__fig--facade .store__img { aspect-ratio: 4 / 5; border-radius: 28px; }
+.store__fig--facade .store__img::after { border-radius: 20px; inset: 12px; }
+.store__fig--facade .store__img > img { object-position: 39% 50%; }
+.store__fig--facade figcaption { border-radius: 0 0 28px 28px; padding: 64px 26px 22px; font-size: 1.0625rem; letter-spacing: 0.03em; }
+@media (min-width: 600px) { .store__fig--facade .store__img { aspect-ratio: 16 / 10; } .store__fig--facade .store__img > img { object-position: 50% 40%; } }
+@media (min-width: 860px) {
+  .store__in { display: grid; grid-template-columns: 5fr 7fr; column-gap: clamp(36px, 5vw, 72px); row-gap: clamp(40px, 5vw, 64px); align-items: start; }
+  .store__grid { display: contents; }
+  .store__head { grid-column: 1; grid-row: 1; align-self: center; }
+  .store__fig--facade { grid-column: 2; grid-row: 1; margin-top: 0; border-radius: 24px 120px 24px 24px; }
+  .store__fig--facade .store__img { aspect-ratio: 3 / 2; border-radius: 24px 120px 24px 24px; }
+  .store__fig--facade .store__img::after { border-radius: 16px 110px 16px 16px; }
+  .store__fig--facade .store__img > img { object-position: 50% 30%; }
+  .store__fig--facade figcaption { border-radius: 0 0 24px 24px; font-size: 1rem; padding: 60px 28px 22px; }
+  .store__sign { grid-column: 1; grid-row: 2; }
+  .store__rooms { grid-column: 2; grid-row: 2; }
 }
 
 /* ───────── что привезли ───────── */
@@ -1034,6 +1072,7 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
   .gate.is-opening .logo__key { animation: none; }
   .gate .gate__bob, .gate .gate__glow { animation: none !important; }
   .gate.is-fade { transition-duration: 160ms; }
+  .gate__light, .gate__ripple { display: none; }
   .gate__door { transition: none; }
   .marquee__track { animation: none; }
   .btn--gold::after { animation: none; display: none; }

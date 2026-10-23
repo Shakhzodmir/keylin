@@ -5,16 +5,16 @@
  */
 window.KELIN = {
   // Показывает маленькую плашку «Демо-версия» внизу страницы. Для боевой версии поставить false.
-  sample: true,
+  sample: false,
 
   // Дата открытия подтверждена: 25 октября 2026, воскресенье. Время подтверждено: 10:00 утра. Часовой пояс Ташкента (UTC+5). Из этого считаются таймер, дата и календарь.
   opening: { year: 2026, month: 10, day: 25, hour: 10, minute: 0, tzOffset: 5, durationHours: 3 },
 
   // Адрес текстом. Пустая строка = показать «Ташкент, точный адрес на карте».
-  address: { uz: '', ru: '' },
+  address: { uz: 'Toshkent, Yashnobod tumani, Aviasozlar-3 massivi', ru: 'Ташкент, Яшнабадский район, массив Авиасозлар-3' },
 
-  // Точка на карте (из ссылки, которую прислали).
-  coords: { lat: 41.288503, lng: 69.344578 },
+  // Точка магазина: из ссылки Яндекс (Что здесь), 23.10. Здание по карте OSM: дом 38, массив Авиасозлар-3.
+  coords: { lat: 41.2884, lng: 69.344235 },
 
   links: {
     invitation: 'https://shakhzodmir.github.io/keylin/',
@@ -63,6 +63,7 @@ window.KELIN = {
     'gallery-5': { src: 'assets/photos/graduation-banner.webp' },
 
     // Раздел «Наш магазин»: настоящие фото. Видео без звука и метаданных, играет само, пока на экране.
+    'store-facade': { src: 'assets/photos/store-facade.webp' },
     'store-sign': { src: 'assets/photos/store-sign-photo.webp' },
     'store-clip': { src: 'assets/photos/store-sign.mp4', poster: 'assets/photos/store-sign-poster.webp', autoplay: true },
     'store-shelves': { src: 'assets/photos/store-shelves.webp' },

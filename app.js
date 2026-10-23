@@ -325,7 +325,7 @@
     spawnSparks();
     setTimeout(function () { if (window.KelinPetals) window.KelinPetals.burst(ix, iy, vw < 600 ? 28 : 44); }, 260);
     setTimeout(function () { body.classList.add('is-open'); startPetals(); }, 640);
-    setTimeout(finishGate, 1900);                     // створки заканчивают движение примерно к 1.5 с
+    setTimeout(finishGate, 2150);                     // створки заканчивают движение примерно к 1.65 с
   }
 
   /* ───────── галерея: свайп, кнопки и клавиатура ───────── */
@@ -468,10 +468,10 @@
     var L = CFG.links || {};
     var c = CFG.coords || { lat: 41.288503, lng: 69.344578 };
     $('#mapGoogle').href = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&ll=' + c.lat + ',' + c.lng + '&z=16';
-    $('#mapYandex').href = 'https://yandex.uz/maps/?pt=' + c.lng + ',' + c.lat + '&z=17&l=map';
+    $('#mapYandex').href = 'https://yandex.uz/maps/?pt=' + c.lng + ',' + c.lat + '&z=18&l=map';
     $('#lnkIg').href = L.instagram || '#';
     $('#lnkTg').href = L.telegram || '#';
-    $('#venueMap').src = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&z=16&output=embed';
+    $('#venueMap').src = 'https://maps.google.com/maps?q=' + c.lat + ',' + c.lng + '&z=17&output=embed';
   }
 
   /* ───────── визитки ───────── */
