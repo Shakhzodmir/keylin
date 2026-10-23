@@ -94,7 +94,25 @@
     btn.appendChild(ring);
     slot.appendChild(btn);
 
+    var userPaused = false;
+    if (m.autoplay) {                                  // немое «живое» видео: играет, пока блок на экране
+      v.muted = true; v.defaultMuted = true; v.setAttribute('muted', '');
+      v.preload = 'none';
+      if (!reduceMotion && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !userPaused) {
+              var pr = v.play();
+              if (pr && pr.catch) pr.catch(function () { /* экономия заряда: кнопка воспроизведения остаётся */ });
+            } else if (!e.isIntersecting) {
+              v.pause();
+            }
+          });
+        }, { threshold: 0.35, rootMargin: '120px 0px' }).observe(slot);
+      }
+    }
     btn.addEventListener('click', function () {
+      userPaused = !v.paused;
       if (v.paused) {
         videos.forEach(function (o) { if (o !== v) o.pause(); });
         var pr = v.play();
@@ -176,6 +194,8 @@
     $$('[data-slot]').forEach(function (s) {
       var im = $('img', s);
       if (im) im.alt = tr('slot.' + s.getAttribute('data-slot'));
+      var vd = $('video', s);
+      if (vd) vd.setAttribute('aria-label', tr('slot.' + s.getAttribute('data-slot')));
     });
     var fr = $('#mapCard iframe'); if (fr) fr.title = tr('venue.map');
 

@@ -60,6 +60,13 @@ window.KELIN = {
     'gallery-2': { src: 'assets/photos/graduation-bears.webp' },
     'gallery-3': { src: 'assets/photos/sakura-pose.webp' },
     'gallery-4': { src: 'assets/photos/graduation-red.webp' },
-    'gallery-5': { src: 'assets/photos/graduation-banner.webp' }
+    'gallery-5': { src: 'assets/photos/graduation-banner.webp' },
+
+    // Раздел «Наш магазин»: настоящие фото. Видео без звука и метаданных, играет само, пока на экране.
+    'store-sign': { src: 'assets/photos/store-sign-photo.webp' },
+    'store-clip': { src: 'assets/photos/store-sign.mp4', poster: 'assets/photos/store-sign-poster.webp', autoplay: true },
+    'store-shelves': { src: 'assets/photos/store-shelves.webp' },
+    'store-window': { src: 'assets/photos/store-window.webp' },
+    'store-lounge': { src: 'assets/photos/store-lounge.webp' }
   }
 };

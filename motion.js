@@ -47,7 +47,7 @@
   var driftItems = [];
   function setupDrift() {
     if (reduce) return;
-    [['.shop__image > img', 38], ['.origin__image > img', 46], ['.sisters .portrait__window > img', 26], ['.gal .frame__in > img', 22]].forEach(function (group) {
+    [['.shop__image > img', 38], ['.origin__image > img', 46], ['.sisters .portrait__window > img', 26], ['.gal .frame__in > img', 22], ['.store__img > img', 22]].forEach(function (group) {
       document.querySelectorAll(group[0]).forEach(function (img) {
         img.setAttribute('data-drift', '');
         driftItems.push({ el: img, range: group[1] });
@@ -80,6 +80,8 @@
       ['.shop .sec-title', 'up', 0],
       ['.shop__art, .origin__content', 'up', 0],
       ['.origin__image', 'reveal', 0],
+      ['.store__head', 'up', 0],
+      ['.store__fig, .store__clip', 'up', 90],
       ['.cat', 'up', 60],
       ['.gal .sec-title', 'up', 0],
       ['.gal__item', 'up', 80],

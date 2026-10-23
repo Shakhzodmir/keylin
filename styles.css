@@ -504,6 +504,59 @@ html:not(.is-locked) .gate__ring { display: none; }
   box-shadow: 0 22px 40px -26px rgba(92, 45, 28, 0.55);
 }
 
+/* ───────── наш магазин: вывеска, видео, интерьер ───────── */
+.store { background: var(--paper); padding-bottom: 96px; }
+.store__in { max-width: 1180px; }
+.store__head { max-width: 38rem; }
+.store__head .sec-title { text-wrap: balance; }
+.store__grid { margin-top: 48px; display: grid; gap: 40px; }
+
+/* вывеска: арочная рамка, поверх неё «живое» видео под лёгким наклоном */
+.store__sign { position: relative; width: 82%; margin-bottom: 14%; }
+.store__fig { position: relative; margin: 0; min-width: 0; }
+.store__img { position: relative; overflow: hidden; background: #F2D5C8; aspect-ratio: 4 / 3; border-radius: 2px; }
+.store__img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
+.store__fig figcaption { margin-top: 12px; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-soft); }
+.store__fig--sign .store__img {
+  aspect-ratio: 3 / 4; border-radius: 50% 50% 2px 2px / 30% 30% 2px 2px;
+  outline: 1px solid rgba(205, 165, 130, 0.7); outline-offset: 7px;
+}
+.store__fig--sign .store__img > img { object-position: 50% 42%; }
+
+.store__clip {
+  position: absolute; z-index: 2; right: -19%; bottom: -13%; width: 42%; aspect-ratio: 464 / 848; rotate: 3.2deg;
+  border-radius: 16px; overflow: hidden; background: #E9C9BE;
+  border: 3px solid var(--paper); outline: 1.5px solid var(--gold);
+  box-shadow: 0 26px 44px -22px rgba(58, 30, 18, 0.55);
+}
+.store__clip video, .store__clip > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.store__clip .slot-play span { width: 44px; height: 44px; }
+.store__clip .slot-play .ic { width: 18px; height: 18px; }
+
+.store__rooms { display: grid; gap: 14px; align-content: start; }
+.store__pair { display: grid; gap: 14px; }
+
+/* «для гостей»: золотая метка на снимке с диванчиками */
+.store__tag {
+  position: absolute; z-index: 2; left: 12px; top: 12px; padding: 6px 14px; border-radius: 999px;
+  background: var(--gold); color: var(--cocoa); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em;
+  box-shadow: 0 8px 18px -10px rgba(122, 86, 0, 0.7);
+}
+
+@media (min-width: 600px) {
+  .store__pair { grid-template-columns: 1fr 1fr; }
+  .store__sign { width: 62%; margin-inline: auto 0; margin-right: auto; margin-bottom: 12%; }
+  .store__clip { right: -26%; width: 38%; }
+}
+@media (min-width: 860px) {
+  .store { padding-bottom: 120px; }
+  .store__grid { grid-template-columns: 5fr 7fr; gap: clamp(36px, 5vw, 72px); align-items: start; margin-top: 64px; }
+  .store__sign { width: 76%; margin: 0; position: sticky; top: 104px; }   /* вывеска едет рядом, пока справа листаются залы */
+  .store__clip { right: -28%; bottom: -10%; width: 44%; }
+  .store__rooms { gap: 18px; }
+  .store__pair { gap: 18px; }
+}
+
 /* ───────── что привезли ───────── */
 .shop { background: var(--paper); }
 .shop::before, .shop::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(252, 188, 12, 0.75), transparent); }
@@ -947,6 +1000,8 @@ textarea.input { min-height: 96px; resize: vertical; line-height: 1.5; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .store__clip { rotate: none; }
+  .store__img > img { transform: none !important; }
   .gate.is-opening .logo__key { animation: none; }
   .gate .gate__bob, .gate .gate__glow, .gate__petals { animation: none !important; }
   .gate__ring { display: none; }
