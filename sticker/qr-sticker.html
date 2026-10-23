@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Keylin Cosmetics: QR-стикер</title>
+<style>
+  /* Квадратный стикер 1000 × 1000 пикселей макета. PNG рисуется с коэффициентом 3 (3000 × 3000).
+     ?blank=1 убирает QR и ключ: останется чистая белая карточка под ваш QR. */
+  @font-face { font-family: 'Jost'; font-weight: 100 900; src: url('../assets/fonts/Jost.ttf') format('truetype'); }
+  @font-face { font-family: 'Sacramento'; src: url('../assets/fonts/Sacramento.ttf') format('truetype'); }
+  :root { --cocoa: #3A1E12; --ink: #5A2D14; --ink-soft: #6B4A3A; --gold: #FCBC0C; --coral-ink: #B8423F; --petal: #FDE6E4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  .sticker {
+    position: relative; width: 1000px; height: 1000px; overflow: hidden; font-family: 'Jost', sans-serif; color: var(--cocoa);
+    background: radial-gradient(110% 90% at 50% 34%, #FFF4F1 0%, var(--petal) 52%, #F8D3CF 100%);
+  }
+  .sticker::before {                 /* бумажная фактура */
+    content: ''; position: absolute; inset: 0; opacity: 0.4; mix-blend-mode: multiply; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .62  0 0 0 0 .36  0 0 0 0 .32  0 0 0 .34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .petals { position: absolute; max-width: none; height: auto; pointer-events: none; }
+  .petals--tl { top: 0; left: 0; width: 520px;
+    -webkit-mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 50%, transparent 100%); mask-image: radial-gradient(ellipse 92% 96% at 0 0, #000 50%, transparent 100%); }
+  .petals--br { right: 0; bottom: 0; width: 330px;
+    -webkit-mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 46%, transparent 100%); mask-image: radial-gradient(ellipse 110% 90% at 100% 100%, #000 46%, transparent 100%); }
+  .frame { position: absolute; inset: 34px; border: 2px solid rgba(252, 188, 12, 0.85); border-radius: 58px; pointer-events: none; }
+  .frame::after { content: ''; position: absolute; inset: 11px; border: 1px solid rgba(252, 188, 12, 0.5); border-radius: 48px; }
+
+  .logo { position: absolute; left: 50%; top: 58px; width: 230px; aspect-ratio: 1.24117; transform: translateX(-50%); }
+  .logo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .script { position: absolute; left: 0; right: 0; top: 262px; text-align: center; font-family: 'Sacramento', cursive; font-size: 86px; line-height: 1; color: var(--coral-ink); }
+  .ornament { position: absolute; left: 50%; top: 372px; width: 150px; height: 12px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; color: var(--gold); }
+  .ornament::before, .ornament::after { content: ''; flex: 1; height: 1.5px; background: currentColor; }
+  .ornament i { width: 9px; height: 9px; background: currentColor; transform: rotate(45deg); }
+
+  .card {
+    position: absolute; left: 50%; top: 396px; width: 424px; height: 424px; transform: translateX(-50%);
+    background: #fff; border-radius: 46px; border: 3px solid var(--gold);
+    box-shadow: 0 34px 60px -30px rgba(92, 45, 28, 0.55), 0 0 0 10px rgba(255, 255, 255, 0.55);
+  }
+  .qr { position: absolute; inset: 38px; width: auto; height: auto; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .key { position: absolute; left: 50%; top: 50%; width: 25%; aspect-ratio: 1; transform: translate(-50%, -50%); background: #fff; border-radius: 12px; display: grid; place-items: center; }
+  .key img { width: 88%; height: 88%; object-fit: contain; }
+  .blank .qr { display: none; }
+  .pill {
+    position: absolute; left: 50%; top: -25px; transform: translateX(-50%); padding: 12px 28px; border-radius: 999px; white-space: nowrap;
+    background: linear-gradient(120deg, #FFE2A0, #F4C15B); border: 1.5px solid #E5B767; color: var(--cocoa); font-size: 25px; font-weight: 500; letter-spacing: 0.04em;
+    box-shadow: 0 12px 22px -12px rgba(168, 119, 54, 0.8);
+  }
+  .pill i { display: inline-block; width: 8px; height: 8px; margin: 0 12px 3px; background: var(--cocoa); transform: rotate(45deg); }
+  .hint { position: absolute; left: 0; right: 0; top: 848px; text-align: center; }
+  .hint b { display: block; font-weight: 500; font-size: 33px; letter-spacing: 0.02em; }
+  .hint span { display: block; margin-top: 6px; font-weight: 300; font-size: 24px; color: var(--ink-soft); letter-spacing: 0.03em; }
+</style>
+</head>
+<body>
+<div class="sticker" id="sticker">
+  <img class="petals petals--tl" src="../assets/petals/corner-tl.webp" alt="">
+  <img class="petals petals--br" src="../assets/petals/corner-br.webp" alt="">
+  <div class="frame"></div>
+  <div class="logo" aria-label="Keylin Cosmetics">
+    <img src="../assets/logo/ke.webp" alt=""><img src="../assets/logo/lin.webp" alt=""><img src="../assets/logo/key.webp" alt=""><img src="../assets/logo/cosmetics.webp" alt="">
+  </div>
+  <div class="script">Sizni kutamiz</div>
+  <div class="card" id="card">
+    <div class="pill">Ochilish<i></i>25 oktabr<i></i>10:00</div>
+    <div class="qr"><img src="qr-keylin.svg" alt="QR-код приглашения"></div>
+    <div class="key"><img src="key.png" alt=""></div>
+  </div>
+  <div class="hint"><b>Kamerani QR-kodga qarating</b><span>Наведите камеру на QR-код · Открытие 25 октября, 10:00</span></div>
+</div>
+<script>
+  if (/[?&]blank\b/.test(location.search)) {
+    document.getElementById('sticker').classList.add('blank');
+    document.querySelector('.key').style.display = 'none';
+  }
+</script>
+</body>
+</html>
