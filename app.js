@@ -35,7 +35,7 @@
   }
 
   /* ───────── дата открытия ───────── */
-  var O = CFG.opening || { year: 2026, month: 11, day: 15, hour: 18, minute: 0, tzOffset: 5, durationHours: 3 };
+  var O = CFG.opening || { year: 2026, month: 10, day: 25, hour: 10, minute: 0, tzOffset: 5, durationHours: 3 };
   var TZ = O.tzOffset === undefined ? 5 : O.tzOffset;
   var target = Date.UTC(O.year, O.month - 1, O.day, O.hour - TZ, O.minute || 0);
 
@@ -848,7 +848,6 @@
     $('#saveContact').addEventListener('click', downloadVcard);
     if (CFG.sample) {
       $('#sampleFlag').hidden = false;
-      $('#dateNote').hidden = false;
     }
     $('#rsvpNotice').hidden = !!CFG.rsvpEndpoint;
 
