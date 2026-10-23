@@ -1,4 +1,4 @@
-/* KeLin: scroll reveals, light parallax, frame tilt and desktop gallery dragging.
+/* Keylin: scroll reveals, light parallax, frame tilt and desktop gallery dragging.
  * Native scrolling stays in control. Only transform/opacity animate on entry.
  */
 (function () {

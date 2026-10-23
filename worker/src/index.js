@@ -1,4 +1,4 @@
-/* KeLin Cosmetics: приём ответов гостей и пересылка в Telegram.
+/* Keylin Cosmetics: приём ответов гостей и пересылка в Telegram.
  *
  * Сайт (GitHub Pages) шлёт POST /rsvp с JSON. Worker проверяет данные и отправляет текст в Telegram.
  * Токен бота и номера чатов лежат только в секретах Cloudflare, в коде и в репозитории их нет.

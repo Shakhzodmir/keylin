@@ -497,9 +497,9 @@ html:not(.is-locked) .gate__ring { display: none; }
 .step .pair > figure:first-child { transform: rotate(-4deg); }
 .step .pair > figure:nth-child(2) { transform: rotate(4deg); }
 
-.step__logo { width: min(86%, 300px); margin-inline: auto; display: block; }
+.step__logo { width: min(84%, 290px); margin: 0; display: block; transform: translateY(4%); }   /* чуть ниже геометрического центра: верх арки уже низа */
 .step__logo-card {
-  width: min(100%, 320px); padding: 22px 8px 18px; border-radius: 50% 50% 2px 2px / 40% 40% 2px 2px;
+  display: grid; place-items: center; width: min(100%, 320px); padding: 0 10px; border-radius: 50% 50% 2px 2px / 40% 40% 2px 2px;
   border: 1px solid #C99E7D; background: radial-gradient(circle at 30% 12%, #FFF6F4 0, #FADAD7 80%);
   box-shadow: 0 22px 40px -26px rgba(92, 45, 28, 0.55);
 }

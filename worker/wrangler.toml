@@ -1,4 +1,4 @@
-# KeLin Cosmetics: приём ответов гостей (Cloudflare Worker).
+# Keylin Cosmetics: приём ответов гостей (Cloudflare Worker).
 # Секреты здесь НЕ хранятся. Они задаются командами:
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN
 #   npx wrangler secret put TELEGRAM_CHAT_IDS

@@ -1,4 +1,4 @@
-/* KeLin Cosmetics: приглашение. Язык, заставка с ключом, история, визитки, таймер, карта, форма, календарь. */
+/* Keylin Cosmetics: приглашение. Язык, заставка с ключом, история, визитки, таймер, карта, форма, календарь. */
 (function () {
   'use strict';
 
@@ -52,7 +52,7 @@
       timeAt: tr('hero.at') + ' ' + timeText(),
       when: tr('venue.when').replace('{weekday}', weekdayText()).replace('{day}', O.day).replace('{month}', monthText()).replace('{time}', timeText()),
       address: addressText(),
-      phone: person().phoneLabel || '',
+      phone: phoneOf(person()).label,
       email: person().email || '',
       coordinates: (CFG.coords || {}).lat + '° N · ' + (CFG.coords || {}).lng + '° E'
     };
@@ -491,6 +491,11 @@
     var L = CFG.links || {};
     return people[0] || { id: '', first: '', last: '', phone: L.phone || '', phoneLabel: L.phoneLabel || '', email: '' };
   }
+  // У сестры нет личного номера на сайте: показываем общий номер магазина.
+  function phoneOf(p) {
+    var L = CFG.links || {};
+    return { tel: p.phone || L.phone || '', label: p.phoneLabel || L.phoneLabel || '' };
+  }
   function fullName(p, upper) {
     var s = upper ? (p.last + ' ' + p.first).toUpperCase() : p.first + ' ' + p.last;
     return s.trim();
@@ -544,7 +549,7 @@
         li.appendChild(item);
         rows.appendChild(li);
       };
-      addRow('phone', p.phoneLabel, p.phone ? 'tel:' + p.phone : '');
+      addRow('phone', phoneOf(p).label, phoneOf(p).tel ? 'tel:' + phoneOf(p).tel : '');
       addRow('instagram', L.instagramLabel, L.instagram);
       addRow('telegram', L.telegramContactLabel, L.telegramContact);
       addRow('mail', p.email, p.email ? 'mailto:' + p.email : '');
@@ -628,8 +633,9 @@
     var tel = $('#lnkTel');
     var mail = $('#lnkMail');
     if (!tel || !mail) return;
-    tel.parentNode.hidden = !p.phone;
-    if (p.phone) tel.href = 'tel:' + p.phone;
+    var phone = phoneOf(p);
+    tel.parentNode.hidden = !phone.tel;
+    if (phone.tel) tel.href = 'tel:' + phone.tel;
     mail.parentNode.hidden = !p.email;
     if (p.email) mail.href = 'mailto:' + p.email;
     bindText();
@@ -639,8 +645,8 @@
   function downloadVcard() {
     var p = person();
     var L = CFG.links || {};
-    var lines = ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + vcardEsc(p.last) + ';' + vcardEsc(p.first) + ';;;', 'FN:' + vcardEsc(fullName(p)), 'ORG:KeLin Cosmetics', 'TITLE:' + vcardEsc(tr('card.role'))];
-    if (p.phone) lines.push('TEL;TYPE=CELL:' + p.phone);
+    var lines = ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + vcardEsc(p.last) + ';' + vcardEsc(p.first) + ';;;', 'FN:' + vcardEsc(fullName(p)), 'ORG:Keylin Cosmetics', 'TITLE:' + vcardEsc(tr('card.role'))];
+    if (phoneOf(p).tel) lines.push('TEL;TYPE=CELL:' + phoneOf(p).tel);
     if (p.email) lines.push('EMAIL;TYPE=INTERNET:' + p.email);
     if (L.instagram) lines.push('URL:' + L.instagram);
     if (L.telegramContact) lines.push('URL:' + L.telegramContact);
@@ -649,7 +655,7 @@
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'KeLin-' + (p.first || 'contact') + '.vcf';
+    a.download = 'Keylin-' + (p.first || 'contact') + '.vcf';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -704,7 +710,7 @@
     var c = CFG.coords || { lat: 41.288503, lng: 69.344578 };
     var end = target + (O.durationHours || 3) * 3600 * 1000;
     var lines = [
-      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//KeLin Cosmetics//Invitation//UZ', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Keylin Cosmetics//Invitation//UZ', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       'BEGIN:VEVENT',
       'UID:opening-' + target + '@keylin-cosmetics',
       'DTSTAMP:' + icsStamp(Date.now()),
